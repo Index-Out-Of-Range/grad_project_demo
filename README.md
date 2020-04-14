@@ -3,3 +3,5 @@
 
 #### 2020年4月14日19点34分
 初步效果展示如下
+
+![image](https://github.com/Index-Out-Of-Range/grad_project_demo/blob/master/other/1.gif)
