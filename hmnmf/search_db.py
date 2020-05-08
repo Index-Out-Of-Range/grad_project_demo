@@ -57,9 +57,7 @@ def search_phenotype_from_db(phenotype_name):
         print(str(e))
     connection.close()
     predict_results = delete_duplicate_node(2, known_results, predict_results)
-    print(predict_results)
     predict_results = normalization(predict_results)
-    print(predict_results)
     return known_results, predict_results
 
 

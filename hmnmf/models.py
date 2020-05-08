@@ -4,6 +4,8 @@ from django.db import models
 # Create your models here.
 class Gene(models.Model):
     gene_name = models.CharField(max_length=16, primary_key=True)
+    # gene_id = models.CharField(max_length=16)
+    # gene_detail = models.CharField(max_length=1024)
 
     def __str__(self):
         return self.gene_name
@@ -11,6 +13,8 @@ class Gene(models.Model):
 
 class Phenotype(models.Model):
     phenotype_name = models.CharField(max_length=16, primary_key=True)
+    # phenotype_id = models.CharField(max_length=16)
+    # phenotype_detail = models.CharField(max_length=1024)
 
     def __str__(self):
         return self.phenotype_name
