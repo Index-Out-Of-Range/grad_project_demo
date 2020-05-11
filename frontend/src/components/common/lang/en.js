@@ -75,7 +75,12 @@ module.exports = {
         detail: 'Details'
       },
       delete: 'DELETE',
-      goto: 'GOTO'
+      goto: 'GOTO',
+      tip: {
+        tip1: 'Search target',
+        tip2: 'is not in database!',
+        tip3: 'Return'
+      }
     },
     visulization: {
       visulization_result: 'Visualization Result',

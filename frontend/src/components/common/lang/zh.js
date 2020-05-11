@@ -75,7 +75,12 @@ module.exports = {
         detail: '简介'
       },
       delete: '删除',
-      goto: '跳转'
+      goto: '跳转',
+      tip: {
+        tip1: '查询目标',
+        tip2: '不在数据库中!',
+        tip3: '返回'
+      }
     },
     visulization: {
       visulization_result: '可视化结果',

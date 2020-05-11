@@ -1,40 +1,27 @@
 <template>
-  <div class="single_gp_search">
+  <div class="single_gp_search" v-loading="loading">
     <el-row type="flex">
       <SideBar :side_bar_index="side_bar_index"></SideBar>
       <div style="width: 80%; margin-left: 5%;">
-        <div
-          style="text-align : left; font-size: 2em; color:#3CB371; font-weight:bold; margin-bottom: 2%;"
-        >
-          SEARCH
-        </div>
-        <div
-          style="text-align : center; background: white; display:flex; flex-direction:column; color:#808080;"
-        >
-          <div style="font-size: 1.5em; padding: 2% 0;">
-            通过ID / Name对表型进行查询
-          </div>
+        <div style="text-align : left; font-size: 2em; color:#3CB371; font-weight:bold; margin-bottom: 2%;">{{ $t('message.search.search') }}</div>
+        <div style="text-align : center; background: white; display:flex; flex-direction:column; color:#808080;">
+          <div style="font-size: 1.5em; padding: 2% 0;">{{ $t('message.search.title.title2') }}</div>
           <el-divider></el-divider>
           <div style="margin: 5% 20%;">
             <div style="margin-bottom:2%; text-align: left;">
-              <div>ID / Name :</div>
+              <div>{{ $t('message.search.subtitle.phenotype') }} :</div>
             </div>
-            <el-input
-              placeholder="请输入ID / Name"
-              prefix-icon="el-icon-search"
-              v-model="phenotype_input"
-            >
-            </el-input>
+            <el-input prefix-icon="el-icon-search" v-model="phenotype_input"></el-input>
             <div style="margin-top: 2%; text-align: right;">
               <div>
-                (Search Examples: &nbsp;<a href="/#">#1</a> &nbsp;
+                ({{ $t('message.search.search_example') }}: &nbsp;
+                <a href="/#">#1</a>
+                &nbsp;
                 <a href="/#">#2</a>)
               </div>
             </div>
             <div style="margin-top:10%;">
-              <el-button type="primary" icon="el-icon-search" round
-                >SEARCH</el-button
-              >
+              <el-button @click="search()" type="primary" icon="el-icon-search" round>{{ $t('message.search.search') }}</el-button>
             </div>
           </div>
         </div>
@@ -50,10 +37,42 @@ export default {
   data() {
     return {
       side_bar_index: '/single_phenotype_search',
-      phenotype_input: ''
+      phenotype_input: '',
+      loading: false
     }
   },
-  components: { SideBar }
+  components: { SideBar },
+  methods: {
+    search() {
+      this.loading = true
+      this.$axios
+        .get(
+          'http://127.0.0.1:8000/api/search_phenotype?phenotype_name=' +
+            this.phenotype_input
+        )
+        .then(res => {
+          console.log(res)
+          if (res.status === 200) {
+            this.loading = false
+            this.$router.push({
+              name: 'gp_search_result',
+              params: {
+                para: {
+                  search_kind: '2',
+                  search_target: this.phenotype_input,
+                  known_data: res.data.known_results,
+                  predict_data: res.data.predict_results
+                }
+              }
+            })
+          } else {
+            this.$message.error('查询表型失败，请重试')
+            console.log(res.data.msg)
+          }
+        })
+        .catch(error => console.log(error))
+    }
+  }
 }
 </script>
 

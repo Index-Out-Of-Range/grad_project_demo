@@ -6,13 +6,13 @@
         <div
           style="text-align : left; font-size: 2em; color:#3CB371; font-weight:bold; margin-bottom: 2%;"
         >
-          SEARCH
+          {{ $t('message.search.predict') }}
         </div>
         <div
           style="text-align : center; background: white; display:flex; flex-direction:column; color:#808080;"
         >
           <div style="font-size: 1.5em; padding: 2% 0;">
-            上传文件进行预测
+            {{ $t('message.search.title.title3') }}
           </div>
           <el-divider></el-divider>
           <div style="margin: 4% 20%;">
@@ -24,17 +24,18 @@
               >
                 <i class="el-icon-upload"></i>
                 <div class="el-upload__text">
-                  将文件拖到此处，或<em>点击上传</em>
+                  {{ $t('message.search.upload_tip.tip1')
+                  }}<em>{{ $t('message.search.upload_tip.tip2') }}</em>
                 </div>
                 <div class="el-upload__tip" slot="tip">
-                  请上传.mat文件
+                  {{ $t('message.search.upload_tip.tip3') }}
                 </div>
               </el-upload>
             </div>
             <div style="margin-top:5%;">
-              <el-button type="primary" icon="el-icon-search" round
-                >PREDICT</el-button
-              >
+              <el-button type="primary" icon="el-icon-search" round>{{
+                $t('message.search.predict')
+              }}</el-button>
             </div>
           </div>
         </div>

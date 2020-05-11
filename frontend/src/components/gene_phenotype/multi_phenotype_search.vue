@@ -6,36 +6,38 @@
         <div
           style="text-align : left; font-size: 2em; color:#3CB371; font-weight:bold; margin-bottom: 2%;"
         >
-          SEARCH
+          {{ $t('message.search.search') }}
         </div>
         <div
           style="text-align : center; background: white; display:flex; flex-direction:column; color:#808080;"
         >
           <div style="font-size: 1.5em; padding: 2% 0;">
-            通过ID / Name对表型进行查询
+            {{ $t('message.search.title.title2') }}
           </div>
           <el-divider></el-divider>
           <div style="margin: 5% 20%;">
             <div style="margin-bottom:2%; text-align: left;">
-              <div>ID / Name :</div>
+              <div>{{ $t('message.search.subtitle.phenotype') }} :</div>
             </div>
             <el-input
               type="textarea"
               :rows="4"
-              placeholder="请输入ID / Name, 每行一个"
+              :placeholder="$t('message.search.tip.tip2')"
               v-model="multi_phenotype_input"
             >
             </el-input>
             <div style="margin-top: 2%; text-align: right;">
               <div>
-                (Search Examples: &nbsp;<a href="/#">#1</a> &nbsp;
-                <a href="/#">#2</a>)
+                ({{ $t('message.search.search_example') }}: &nbsp;<a href="/#"
+                  >#1</a
+                >
+                &nbsp; <a href="/#">#2</a>)
               </div>
             </div>
             <div style="margin-top:10%;">
-              <el-button type="primary" icon="el-icon-search" round
-                >SEARCH</el-button
-              >
+              <el-button type="primary" icon="el-icon-search" round>{{
+                $t('message.search.search')
+              }}</el-button>
             </div>
           </div>
         </div>

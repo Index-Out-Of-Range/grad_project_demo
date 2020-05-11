@@ -97,7 +97,7 @@ export default {
     return {
       search_kind: '',
       search_target: '',
-      save_data: {},
+      visualize_data: {},
       loading: false,
       known_data: [],
       predict_data: [],
@@ -111,12 +111,16 @@ export default {
     }
   },
   created() {
-    if (sessionStorage.getItem('save_data') != null) {
-      this.save_data = JSON.parse(sessionStorage.getItem('save_data'))
-      this.search_kind = this.save_data['search_kind']
-      this.search_target = this.save_data['search_target']
-      this.predict_data = this.save_data['predict_data']
-      this.known_data = this.save_data['known_data']
+    if (sessionStorage.getItem('visualize_data') != null) {
+      this.visualize_data = JSON.parse(sessionStorage.getItem('visualize_data'))
+      this.search_kind = this.visualize_data['search_kind']
+      this.search_target = this.visualize_data['search_target']
+      this.predict_data = this.visualize_data['predict_data'].slice(0, 10)
+      if (this.visualize_data['known_data'].length > 10) {
+        this.known_data = this.visualize_data['known_data'].slice(0, 10)
+      } else {
+        this.known_data = this.visualize_data['known_data']
+      }
     } else {
       this.$message.error('出错！！！')
     }
@@ -129,23 +133,29 @@ export default {
     this.predict_length = this.predict_data.length
   },
   mounted() {
-    this.save_data = {
+    this.visualize_data = {
       search_kind: this.search_kind,
       search_target: this.search_target,
       predict_data: this.predict_data,
       known_data: this.known_data
     }
-    sessionStorage.setItem('save_data', JSON.stringify(this.save_data))
+    sessionStorage.setItem(
+      'visualize_data',
+      JSON.stringify(this.visualize_data)
+    )
     this.draw_chart()
   },
   destroyed() {
-    this.save_data = {
+    this.visualize_data = {
       search_kind: this.search_kind,
       search_target: this.search_target,
       predict_data: this.predict_data,
       known_data: this.known_data
     }
-    sessionStorage.setItem('save_data', JSON.stringify(this.save_data))
+    sessionStorage.setItem(
+      'visualize_data',
+      JSON.stringify(this.visualize_data)
+    )
   },
   methods: {
     draw_chart() {
@@ -161,13 +171,10 @@ export default {
         },
         toolbox: {
           show: true,
-
           feature: {
             saveAsImage: {
               show: true,
-
               excludeComponents: ['toolbox'],
-
               pixelRatio: 2
             }
           }
@@ -195,7 +202,7 @@ export default {
               repulsion: 2000,
               edgeLength: [20, 40, 60, 80, 100]
             },
-            draggable: true,
+            // draggable: true,
             edgeLabel: {
               show: true,
               color: '#000'
@@ -238,15 +245,15 @@ export default {
                   that.known_data = res.data.known_results
                   that.predict_data = res.data.predict_results
                   that.update_data()
-                  that.save_data = {
+                  that.visualize_data = {
                     search_kind: that.search_kind,
                     search_target: that.search_target,
                     predict_data: that.predict_data,
                     known_data: that.known_data
                   }
                   sessionStorage.setItem(
-                    'save_data',
-                    JSON.stringify(that.save_data)
+                    'visualize_data',
+                    JSON.stringify(that.visualize_data)
                   )
 
                   var option = my_chart.getOption()
@@ -289,15 +296,15 @@ export default {
                   that.known_data = res.data.known_results
                   that.predict_data = res.data.predict_results
                   that.update_data()
-                  that.save_data = {
+                  that.visualize_data = {
                     search_kind: that.search_kind,
                     search_target: that.search_target,
                     predict_data: that.predict_data,
                     known_data: that.known_data
                   }
                   sessionStorage.setItem(
-                    'save_data',
-                    JSON.stringify(that.save_data)
+                    'visualize_data',
+                    JSON.stringify(that.visualize_data)
                   )
                   var option = my_chart.getOption()
                   option.series[0].data = that.nodes
