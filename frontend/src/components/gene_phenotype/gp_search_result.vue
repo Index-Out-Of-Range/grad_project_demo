@@ -22,7 +22,7 @@
     <el-row v-loading="loading" v-else>
       <div style="display:flex; justify-content:space-between; padding:2%;">
         <div style="text-align:left; font-size: 2em; font-weight:bold;">
-          ID: #{{ search_target }}
+          {{search_type}} ID: #{{ search_target }}
         </div>
       </div>
       <el-divider></el-divider>
@@ -133,6 +133,7 @@ export default {
   data() {
     return {
       search_kind: '',
+      search_type: '',
       search_target: '',
       save_data: {},
       loading: false,
@@ -199,24 +200,20 @@ export default {
     }
 
     this.target_info = [
-      {
-        Attributes: 'Name',
-        Content: '-'
-      },
-      {
-        Attributes: 'ID',
-        Content: this.search_target
-      },
-      {
-        Attributes: 'Detail',
-        Content: '-'
-      }
+      { Attributes: 'Name', Content: '-' },
+      { Attributes: 'ID', Content: this.search_target },
+      { Attributes: 'Detail', Content: '-' }
     ]
   },
   mounted() {
     console.log('mounted...................')
     this.save_all_data()
     this.update_table_data()
+    if (this.search_kind === '1') {
+      this.search_type = 'Gene'
+    } else if (this.search_kind === '2') {
+      this.search_type = 'Phenotype'
+    }
   },
   destroyed() {
     console.log('destroyed...................')
@@ -444,6 +441,7 @@ export default {
       console.log(index, row)
       this.loading = true
       this.handleGoto(row)
+      this.handleKnownCurrentChange(1)
     },
     handleKnownDelete(index, row) {
       console.log(index, row)
@@ -473,6 +471,7 @@ export default {
       console.log(index, row)
       this.loading = true
       this.handleGoto(row)
+      this.handlePredictCurrentChange(1)
     },
     handlePredictDelete(index, row) {
       console.log(index, row)
