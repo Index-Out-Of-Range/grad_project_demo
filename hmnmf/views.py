@@ -66,12 +66,12 @@ def search_gene(request):
     response = {}
     try:
         gene_name = request.GET.get('gene_name')
-        n = int(request.GET.get('n', 10))
+        # n = int(request.GET.get('n', 10))
         known_results, predict_results = search_gene_from_db(gene_name)
         response['msg'] = 'success'
         response['error_num'] = 0
         response['known_results'] = known_results
-        response['predict_results'] = predict_results[:n]
+        response['predict_results'] = predict_results
     except Exception as e:
         response['msg'] = str(e)
         response['error_num'] = 1
@@ -83,12 +83,12 @@ def search_phenotype(request):
     response = {}
     try:
         phenotype_name = request.GET.get('phenotype_name')
-        n = int(request.GET.get('n', 10))
+        # n = int(request.GET.get('n', 10))
         known_results, predict_results = search_phenotype_from_db(phenotype_name)
         response['msg'] = 'success'
         response['error_num'] = 0
         response['known_results'] = known_results
-        response['predict_results'] = predict_results[:n]
+        response['predict_results'] = predict_results
     except Exception as e:
         response['msg'] = str(e)
         response['error_num'] = 1
