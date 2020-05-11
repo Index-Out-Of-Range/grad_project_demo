@@ -10,3 +10,11 @@
 第二次修改，主要丰富前端界面
 
 ![image](https://github.com/Index-Out-Of-Range/grad_project_demo/blob/master/other/2.gif)
+
+#### 2020年5月11日13点04分
+第三次修改，完善查询结果页面
+* 查询结果过多时，使用分页表格
+* 完成表格中的删除、跳转功能
+* 前端实现查询结果下载
+
+![image](https://github.com/Index-Out-Of-Range/grad_project_demo/blob/master/other/3.gif)
