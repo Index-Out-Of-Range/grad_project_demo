@@ -18,3 +18,9 @@
 * 前端实现查询结果下载
 
 ![image](https://github.com/Index-Out-Of-Range/grad_project_demo/blob/master/other/3.gif)
+
+#### 2020年5月19日23点59分
+第四次修改，完善各个页面的功能
+* 多个基因、表型查询
+* 可视化界面添加、删除节点
+* 懒得放图了，写的好烦
