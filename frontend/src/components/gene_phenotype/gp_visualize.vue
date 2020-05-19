@@ -1,90 +1,27 @@
 <template>
-  <div style="margin: 5% 15%; background:white; padding: 0 2% 2% 2%;">
-    <el-row v-loading="loading" style="margin-bottom:2%;">
+  <div style="margin: 5% 15%; background:white; padding: 0 2% 2% 2%;" v-loading="loading">
+    <el-row style="margin-bottom:2%;">
       <H2>{{ $t('message.visulization.visulization_result') }}</H2>
       <div id="my_chart" style="width: 100%; height: 600px; "></div>
     </el-row>
     <el-divider></el-divider>
     <div style="padding: 0 2%;">
       <el-row style="display:flex; margin:2% 0; justify-content:space-between;">
-        <el-input
-          style="width:60%;"
-          :placeholder="$t('message.visulization.search_tips.add_gene')"
-        ></el-input>
-        <el-button
-          type="primary"
-          style="width:20%;"
-          icon="el-icon-circle-plus-outline"
-          >{{ $t('message.visulization.buttons.add_gene') }}</el-button
-        >
+        <el-input style="width:60%;" :placeholder="$t('message.visulization.search_tips.add_gene')" v-model="addGene" clearable></el-input>
+        <el-button type="primary" style="width:20%;" icon="el-icon-circle-plus-outline" @click="add_gene">{{ $t('message.visulization.buttons.add_gene') }}</el-button>
       </el-row>
       <el-row style="display:flex; margin:2% 0; justify-content:space-between;">
-        <el-input
-          style="width:60%;"
-          :placeholder="$t('message.visulization.search_tips.add_phenotype')"
-        ></el-input>
-        <el-button
-          type="primary"
-          style="width:20%;"
-          icon="el-icon-circle-plus-outline"
-          >{{ $t('message.visulization.buttons.add_phenotype') }}</el-button
-        >
+        <el-input style="width:60%;" :placeholder="$t('message.visulization.search_tips.add_phenotype')" v-model="addPhenotype" clearable></el-input>
+        <el-button type="primary" style="width:20%;" icon="el-icon-circle-plus-outline" @click="add_phenotype">{{ $t('message.visulization.buttons.add_phenotype') }}</el-button>
       </el-row>
       <el-row style="display:flex; margin:2% 0; justify-content:space-between;">
-        <el-input
-          style="width:60%;"
-          :placeholder="$t('message.visulization.search_tips.remove_gene')"
-        ></el-input>
-        <el-button
-          type="danger"
-          style="width:20%;"
-          icon="el-icon-remove-outline"
-          >{{ $t('message.visulization.buttons.remove_gene') }}</el-button
-        >
+        <el-input style="width:60%;" :placeholder="$t('message.visulization.search_tips.remove_gene')" v-model="removeGene" clearable></el-input>
+        <el-button type="danger" style="width:20%;" icon="el-icon-remove-outline" @click="remove_gene">{{ $t('message.visulization.buttons.remove_gene') }}</el-button>
       </el-row>
       <el-row style="display:flex; margin:2% 0; justify-content:space-between;">
-        <el-input
-          style="width:60%;"
-          :placeholder="$t('message.visulization.search_tips.remove_phenotype')"
-        ></el-input>
-        <el-button
-          type="danger"
-          style="width:20%;"
-          icon="el-icon-remove-outline"
-          >{{ $t('message.visulization.buttons.remove_phenotype') }}</el-button
-        >
+        <el-input style="width:60%;" :placeholder="$t('message.visulization.search_tips.remove_phenotype')" v-model="removePhenotype" clearable></el-input>
+        <el-button type="danger" style="width:20%;" icon="el-icon-remove-outline" @click="remove_phenotype">{{ $t('message.visulization.buttons.remove_phenotype') }}</el-button>
       </el-row>
-    </div>
-    <el-divider></el-divider>
-    <div style="padding: 0 10%;">
-      <div
-        style="display:flex; align-items:center; justify-content:space-between;"
-      >
-        <div style="color:gray;">
-          {{ $t('message.visulization.sliders.known_nodes') }}:
-        </div>
-        <el-slider
-          v-model="slide_known"
-          show-input
-          style="margin:2% 0; width: 80%;"
-          :max="known_length"
-        >
-        </el-slider>
-      </div>
-      <div
-        style="display:flex; align-items:center;justify-content:space-between;"
-      >
-        <div style="color:gray;">
-          {{ $t('message.visulization.sliders.predict_nodes') }}:
-        </div>
-        <el-slider
-          v-model="slide_predict"
-          show-input
-          style="margin:2% 0; width: 80%;"
-          :max="predict_length"
-        >
-        </el-slider>
-      </div>
     </div>
   </div>
 </template>
@@ -99,15 +36,18 @@ export default {
       search_target: '',
       visualize_data: {},
       loading: false,
-      known_data: [],
-      predict_data: [],
+
       nodes: [],
       links: [],
       categories: [],
-      slide_known: 0,
-      slide_predict: 0,
-      known_length: 0,
-      predict_length: 0
+
+      all_results: '',
+      all_multi_gp_relations: '',
+
+      addGene: '',
+      addPhenotype: '',
+      removeGene: '',
+      removePhenotype: ''
     }
   },
   created() {
@@ -115,49 +55,31 @@ export default {
       this.visualize_data = JSON.parse(sessionStorage.getItem('visualize_data'))
       this.search_kind = this.visualize_data['search_kind']
       this.search_target = this.visualize_data['search_target']
-      this.predict_data = this.visualize_data['predict_data'].slice(0, 10)
-      if (this.visualize_data['known_data'].length > 10) {
-        this.known_data = this.visualize_data['known_data'].slice(0, 10)
-      } else {
-        this.known_data = this.visualize_data['known_data']
-      }
+      this.all_results = this.visualize_data['all_results']
+      this.all_multi_gp_relations = this.visualize_data['all_multi_gp_relations']
     } else {
       this.$message.error('出错！！！')
     }
 
     this.update_data()
-
-    this.slide_known = this.known_data.length
-    this.slide_predict = this.predict_data.length
-    this.known_length = this.known_data.length
-    this.predict_length = this.predict_data.length
   },
   mounted() {
-    this.visualize_data = {
-      search_kind: this.search_kind,
-      search_target: this.search_target,
-      predict_data: this.predict_data,
-      known_data: this.known_data
-    }
-    sessionStorage.setItem(
-      'visualize_data',
-      JSON.stringify(this.visualize_data)
-    )
+    this.save_data()
     this.draw_chart()
   },
   destroyed() {
-    this.visualize_data = {
-      search_kind: this.search_kind,
-      search_target: this.search_target,
-      predict_data: this.predict_data,
-      known_data: this.known_data
-    }
-    sessionStorage.setItem(
-      'visualize_data',
-      JSON.stringify(this.visualize_data)
-    )
+    this.save_data()
   },
   methods: {
+    save_data() {
+      this.visualize_data = {
+        search_kind: this.search_kind,
+        search_target: this.search_target,
+        all_results: this.all_results,
+        all_multi_gp_relations: this.all_multi_gp_relations
+      }
+      sessionStorage.setItem('visualize_data', JSON.stringify(this.visualize_data))
+    },
     draw_chart() {
       let my_chart = this.$echarts.init(document.getElementById('my_chart'))
       let option = {
@@ -165,8 +87,13 @@ export default {
           text: this.$t('message.visulization.predict_result')
         },
         tooltip: {
-          formatter: function(param) {
-            return param.data.value
+          trigger: 'item',
+          formatter: function (param) {
+            if (param.data.value !== undefined) {
+              return '节点' + param.data.source + '与节点' + param.data.target + '之间的关联是:' + param.data.value
+            } else {
+              return '节点:' + param.data.name
+            }
           }
         },
         toolbox: {
@@ -184,7 +111,7 @@ export default {
             orient: 'vertical',
             left: 'right',
             top: 'bottom',
-            data: this.categories.map(function(a) {
+            data: this.categories.map(function (a) {
               return a.name
             })
           }
@@ -224,38 +151,30 @@ export default {
       }
       my_chart.setOption(option, true)
       let that = this
-      my_chart.on('click', function(param) {
+      const qs = require('qs')
+      my_chart.on('click', function (param) {
         if (param.dataType === 'node') {
-          if (
-            param.data.category.indexOf('GENE') !== -1 &&
-            that.search_kind === '2'
-          ) {
+          if (param.data.category.indexOf('GENE') !== -1 && that.search_kind === '2') {
             that.loading = true
             console.log('GENE:' + param.name)
-            that.$axios
-              .get(
-                'http://127.0.0.1:8000/api/search_gene?gene_name=' + param.name
-              )
+            let gene_list = []
+            gene_list.push(param.name)
+            that.$axios.get('http://127.0.0.1:8000/api/search_genes', {
+              params: { gene_list: gene_list },
+              paramsSerializer: function (params) {
+                return qs.stringify(params, { arrayFormat: 'repeat' })
+              }
+            })
               .then(res => {
                 console.log(res)
                 if (res.status === 200) {
                   that.loading = false
                   that.search_kind = '1'
-                  that.search_target = param.name
-                  that.known_data = res.data.known_results
-                  that.predict_data = res.data.predict_results
+                  that.search_target = gene_list
+                  that.all_results = res.data.results
+                  that.all_multi_gp_relations = res.data.multi_gp_relations
                   that.update_data()
-                  that.visualize_data = {
-                    search_kind: that.search_kind,
-                    search_target: that.search_target,
-                    predict_data: that.predict_data,
-                    known_data: that.known_data
-                  }
-                  sessionStorage.setItem(
-                    'visualize_data',
-                    JSON.stringify(that.visualize_data)
-                  )
-
+                  that.save_data()
                   var option = my_chart.getOption()
                   option.series[0].data = that.nodes
                   option.series[0].links = that.links
@@ -265,47 +184,39 @@ export default {
                       orient: 'vertical',
                       left: 'right',
                       top: 'bottom',
-                      data: that.categories.map(function(a) {
+                      data: that.categories.map(function (a) {
                         return a.name
                       })
                     }
                   ]
                   my_chart.setOption(option, true)
                 } else {
-                  that.$message.error('查询基因失败，请重试')
+                  this.$message.error('查询基因失败，请重试')
                   console.log(res.data.msg)
                 }
               })
-          } else if (
-            param.data.category.indexOf('PHENOTYPE') !== -1 &&
-            that.search_kind === '1'
-          ) {
+              .catch(error => console.log(error))
+          } else if (param.data.category.indexOf('PHENOTYPE') !== -1 && that.search_kind === '1') {
             that.loading = true
             console.log('PHENOTYPE:' + param.name)
-            that.$axios
-              .get(
-                'http://127.0.0.1:8000/api/search_phenotype?phenotype_name=' +
-                  param.name
-              )
+            let phenotype_list = []
+            phenotype_list.push(param.name)
+            that.$axios.get('http://127.0.0.1:8000/api/search_phenotypes', {
+              params: { phenotype_list: phenotype_list },
+              paramsSerializer: function (params) {
+                return qs.stringify(params, { arrayFormat: 'repeat' })
+              }
+            })
               .then(res => {
                 console.log(res)
                 if (res.status === 200) {
                   that.loading = false
                   that.search_kind = '2'
-                  that.search_target = String(param.name)
-                  that.known_data = res.data.known_results
-                  that.predict_data = res.data.predict_results
+                  that.search_target = phenotype_list
+                  that.all_results = res.data.results
+                  that.all_multi_gp_relations = res.data.multi_gp_relations
+                  that.save_data()
                   that.update_data()
-                  that.visualize_data = {
-                    search_kind: that.search_kind,
-                    search_target: that.search_target,
-                    predict_data: that.predict_data,
-                    known_data: that.known_data
-                  }
-                  sessionStorage.setItem(
-                    'visualize_data',
-                    JSON.stringify(that.visualize_data)
-                  )
                   var option = my_chart.getOption()
                   option.series[0].data = that.nodes
                   option.series[0].links = that.links
@@ -315,17 +226,18 @@ export default {
                       orient: 'vertical',
                       left: 'right',
                       top: 'bottom',
-                      data: that.categories.map(function(a) {
+                      data: that.categories.map(function (a) {
                         return a.name
                       })
                     }
                   ]
                   my_chart.setOption(option, true)
                 } else {
-                  that.$message.error('查询表型失败，请重试')
+                  this.$message.error('查询表型失败，请重试')
                   console.log(res.data.msg)
                 }
               })
+              .catch(error => console.log(error))
           }
         } else {
           //   alert('点击了边' + param.value)
@@ -337,99 +249,334 @@ export default {
       this.links = []
       this.categories = []
 
+      let add_nodes = false
+
       if (this.search_kind === '1') {
         this.categories = [
           { name: 'GENE' },
           { name: 'PREDICT PHENOTYPE' },
           { name: 'KNOWN PHENOTYPE' }
         ]
-        this.nodes.push({
-          name: this.search_target,
-          symbolSize: 100,
-          category: 'GENE'
-        })
+        for (let i = 0; i < this.search_target.length; i++) {
+          this.nodes.push({
+            name: this.search_target[i],
+            symbolSize: 80,
+            category: 'GENE'
+          })
+        }
       } else if (this.search_kind === '2') {
         this.categories = [
           { name: 'PHENOTYPE' },
           { name: 'PREDICT GENE' },
           { name: 'KNOWN GENE' }
         ]
-        this.nodes.push({
-          name: this.search_target,
-          symbolSize: 100,
-          category: 'PHENOTYPE'
-        })
-      }
-
-      let target_name =
-        this.search_kind === '1' ? 'phenotype_name' : 'gene_name'
-
-      for (let i = 0, len = this.predict_data.length; i < len; i++) {
-        let item = this.predict_data[i]
-        if (this.search_kind === '1') {
+        for (let i = 0; i < this.search_target.length; i++) {
           this.nodes.push({
-            name: item[target_name],
-            symbolSize: 50,
-            category: 'PREDICT PHENOTYPE'
-          })
-        } else if (this.search_kind === '2') {
-          this.nodes.push({
-            name: item[target_name],
-            symbolSize: 50,
-            category: 'PREDICT GENE'
+            name: this.search_target[i],
+            symbolSize: 80,
+            category: 'PHENOTYPE'
           })
         }
-        this.links.push({
-          source: String(this.search_target),
-          target: String(item[target_name]),
-          value: item['gp_relation'],
-          lineStyle: {
-            width: 1,
-            type: 'dashed',
-            color: 'target',
-            curveness: 0.2
-          }
-        })
       }
-      for (let i = 0, len = this.known_data.length; i < len; i++) {
-        let item = this.known_data[i]
-        if (this.search_kind === '1') {
-          this.nodes.push({
-            name: item[target_name],
-            symbolSize: 50,
-            category: 'KNOWN PHENOTYPE'
-          })
-        } else if (this.search_kind === '2') {
-          this.nodes.push({
-            name: item[target_name],
-            symbolSize: 50,
-            category: 'KNOWN GENE'
-          })
+
+      for (var key1 in this.all_multi_gp_relations) {
+        for (var key2 in this.all_multi_gp_relations[key1]) {
+          var node = {
+            name: key2,
+            symbolSize: 50
+          }
+          if (this.all_multi_gp_relations[key1][key2]['type'] === 'predict') {
+            if (this.search_kind === '1') {
+              node['category'] = 'PREDICT PHENOTYPE'
+            } else if (this.search_kind === '2') {
+              node['category'] = 'PREDICT GENE'
+            }
+            let link = {
+              source: String(key1),
+              target: String(key2),
+              value: this.all_multi_gp_relations[key1][key2]['relation'],
+              lineStyle: {
+                width: 1,
+                type: 'dashed',
+                color: 'target',
+                curveness: 0.2
+              }
+            }
+            if (this.all_multi_gp_relations[key1][key2]['relation'] === 0) {
+              link['lineStyle']['opacity'] = 0
+            }
+            this.links.push(link)
+          } else {
+            if (this.search_kind === '1') {
+              node['category'] = 'KNOWN PHENOTYPE'
+            } else if (this.search_kind === '2') {
+              node['category'] = 'KNOWN GENE'
+            }
+            let link = {
+              source: String(key1),
+              target: String(key2),
+              value: this.all_multi_gp_relations[key1][key2]['relation'],
+              lineStyle: {
+                width: 2,
+                color: 'target',
+                curveness: 0.2
+              }
+            }
+            if (this.all_multi_gp_relations[key1][key2]['relation'] === 0) {
+              link['lineStyle']['opacity'] = 0
+            }
+            this.links.push(link)
+          }
+          if (!add_nodes) {
+            this.nodes.push(node)
+          }
         }
-        this.links.push({
-          source: String(this.search_target),
-          target: String(item[target_name]),
-          value: item['gp_relation'],
-          lineStyle: {
-            width: 2,
-            color: 'target',
-            curveness: 0.2
-          }
-        })
+        add_nodes = true
       }
+    },
+    add_gene() {
+      if (this.isNull(this.addGene)) {
+        this.$message({ message: '输入不能为空', type: 'warning' })
+        return
+      }
+
+      const qs = require('qs')
+      let phenotype_nodes = []
+      let gene_nodes = []
+      let add_type = 1
+      gene_nodes.push(this.addGene)
+      if (this.search_kind === '1') {
+        if (this.search_target.indexOf(this.addGene) > -1) {
+          this.$message({ message: '该基因已在图中', type: 'warning' })
+          return
+        }
+        let flag = false
+        for (let key1 in this.all_multi_gp_relations) {
+          for (let key2 in this.all_multi_gp_relations[key1]) {
+            if (!flag) {
+              phenotype_nodes.push(key2)
+            }
+          }
+          flag = true
+        }
+      } else if (this.search_kind === '2') {
+        let flag = false
+        let genes = []
+        for (let key1 in this.all_multi_gp_relations) {
+          for (let key2 in this.all_multi_gp_relations[key1]) {
+            if (!flag) {
+              genes.push(key2)
+            }
+          }
+          flag = true
+        }
+        if (genes.indexOf(this.addGene) > -1) {
+          this.$message({ message: '该基因已在图中', type: 'warning' })
+          return
+        }
+        for (let key1 in this.all_multi_gp_relations) {
+          phenotype_nodes.push(key1)
+        }
+      }
+      this.loading = true
+      this.$axios.get('http://127.0.0.1:8000/api/add_gene', {
+        params: { gene_nodes: gene_nodes, phenotype_nodes: phenotype_nodes, add_type: add_type },
+        paramsSerializer: function (params) {
+          return qs.stringify(params, { arrayFormat: 'repeat' })
+        }
+      }).then(res => {
+        console.log(res)
+        if (res.status === 200) {
+          this.loading = false
+          let new_gp_relation = res.data.new_gp_relation
+          if (new_gp_relation.length === 0) {
+            this.$message({ message: '数据库中没有该基因', type: 'warning' })
+            return
+          }
+          if (this.search_kind === '1') {
+            let temp_relation = {}
+            temp_relation[String(new_gp_relation[0]['gene'])] = {}
+            for (let i = 0, len = new_gp_relation.length; i < len; i++) {
+              let item = new_gp_relation[i]
+              temp_relation[String(item['gene'])][String(item['phenotype'])] = { 'relation': item['gp_relation'], 'type': item['type'] }
+            }
+            for (var key1 in temp_relation) {
+              this.all_multi_gp_relations[key1] = temp_relation[key1]
+            }
+            this.search_target.push(this.addGene)
+          } else if (this.search_kind === '2') {
+            for (let i = 0, len = new_gp_relation.length; i < len; i++) {
+              this.all_multi_gp_relations[new_gp_relation[i]['phenotype']][new_gp_relation[i]['gene']] = { 'relation': new_gp_relation[i]['gp_relation'], 'type': new_gp_relation[i]['type'] }
+            }
+          }
+          this.update_chart()
+          this.addGene = ''
+        } else {
+          this.$message.error('查询基因失败，请重试')
+          console.log(res.data.msg)
+        }
+      }).catch(error => console.log(error))
+    },
+    add_phenotype() {
+      if (this.isNull(this.addPhenotype)) {
+        this.$message({ message: '输入不能为空', type: 'warning' })
+        return
+      }
+
+      const qs = require('qs')
+      let phenotype_nodes = []
+      let gene_nodes = []
+      let add_type = 2
+      phenotype_nodes.push(this.addPhenotype)
+      if (this.search_kind === '1') {
+        let flag = false
+        let phenotypes = []
+        for (let key1 in this.all_multi_gp_relations) {
+          for (let key2 in this.all_multi_gp_relations[key1]) {
+            if (!flag) {
+              phenotypes.push(key2)
+            }
+          }
+          flag = true
+        }
+        if (phenotypes.indexOf(this.addPhenotype) > -1) {
+          this.$message({ message: '该表型已在图中', type: 'warning' })
+          return
+        }
+        for (let key1 in this.all_multi_gp_relations) {
+          gene_nodes.push(key1)
+        }
+      } else if (this.search_kind === '2') {
+        if (this.search_target.indexOf(this.addPhenotype) > -1) {
+          this.$message({ message: '该表型已在图中', type: 'warning' })
+          return
+        }
+        let flag = false
+        for (let key1 in this.all_multi_gp_relations) {
+          for (let key2 in this.all_multi_gp_relations[key1]) {
+            if (!flag) {
+              gene_nodes.push(key2)
+            }
+          }
+          flag = true
+        }
+      }
+      this.loading = true
+      this.$axios.get('http://127.0.0.1:8000/api/add_phenotype', {
+        params: { gene_nodes: gene_nodes, phenotype_nodes: phenotype_nodes, add_type: add_type },
+        paramsSerializer: function (params) {
+          return qs.stringify(params, { arrayFormat: 'repeat' })
+        }
+      }).then(res => {
+        console.log(res)
+        if (res.status === 200) {
+          this.loading = false
+          let new_gp_relation = res.data.new_gp_relation
+          if (new_gp_relation.length === 0) {
+            this.$message({ message: '数据库中没有该表型', type: 'warning' })
+            return
+          }
+          if (this.search_kind === '1') {
+            for (let i = 0, len = new_gp_relation.length; i < len; i++) {
+              this.all_multi_gp_relations[new_gp_relation[i]['gene']][new_gp_relation[i]['phenotype']] = { 'relation': new_gp_relation[i]['gp_relation'], 'type': new_gp_relation[i]['type'] }
+            }
+          } else if (this.search_kind === '2') {
+            let temp_relation = {}
+            temp_relation[String(new_gp_relation[0]['phenotype'])] = {}
+            for (let i = 0, len = new_gp_relation.length; i < len; i++) {
+              let item = new_gp_relation[i]
+              temp_relation[String(item['phenotype'])][String(item['gene'])] = { 'relation': item['gp_relation'], 'type': item['type'] }
+            }
+            for (var key1 in temp_relation) {
+              this.all_multi_gp_relations[key1] = temp_relation[key1]
+            }
+            this.search_target.push(this.addPhenotype)
+          }
+          this.update_chart()
+          this.addPhenotype = ''
+        } else {
+          this.$message.error('查询基因失败，请重试')
+          console.log(res.data.msg)
+        }
+      }).catch(error => console.log(error))
+    },
+    remove_gene() {
+      if (this.isNull(this.removeGene)) {
+        this.$message({ message: '输入不能为空', type: 'warning' })
+        return
+      }
+      if (this.search_kind === '1') {
+        this.$message({ message: '请不要删除基因节点', type: 'warning' })
+        return
+      }
+      if (this.search_kind === '2') {
+        let gene_delete = false
+        for (var key1 in this.all_multi_gp_relations) {
+          for (var key2 in this.all_multi_gp_relations[key1]) {
+            if (key2 === this.removeGene) {
+              delete this.all_multi_gp_relations[key1][key2]
+              gene_delete = true
+            }
+          }
+        }
+        if (!gene_delete) {
+          this.$message({ message: '图中没有该基因节点', type: 'warning' })
+          return
+        }
+      }
+      this.removeGene = ''
+      this.$message({ message: '删除成功', type: 'success' })
+      this.update_chart()
+    },
+    remove_phenotype() {
+      if (this.isNull(this.removePhenotype)) {
+        this.$message({ message: '输入不能为空', type: 'warning' })
+        return
+      }
+      if (this.search_kind === '2') {
+        this.$message({ message: '请不要删除表型节点', type: 'warning' })
+        return
+      }
+      if (this.search_kind === '1') {
+        let phenotype_delete = false
+        for (var key1 in this.all_multi_gp_relations) {
+          for (var key2 in this.all_multi_gp_relations[key1]) {
+            if (key2 === this.removePhenotype) {
+              delete this.all_multi_gp_relations[key1][key2]
+              phenotype_delete = true
+            }
+          }
+        }
+        if (!phenotype_delete) {
+          this.$message({ message: '图中没有该表型节点', type: 'warning' })
+          return
+        }
+      }
+      this.removePhenotype = ''
+      this.$message({ message: '删除成功', type: 'success' })
+      this.update_chart()
+    },
+    update_chart() {
+      this.save_data()
+      this.update_data()
+      let my_chart = this.$echarts.init(document.getElementById('my_chart'))
+      var option = my_chart.getOption()
+      option.series[0].data = this.nodes
+      option.series[0].links = this.links
+      my_chart.setOption(option, true)
     }
   }
 }
 </script>
 
 <style scoped>
-.el-divider--horizontal{
-  margin:1px 0;
+.el-divider--horizontal {
+  margin: 1px 0;
 }
 
-.el-button--primary{
+.el-button--primary {
   color: #fff;
-  background-color: #3CB371;
-  border-color: #3CB371;
+  background-color: #3cb371;
+  border-color: #3cb371;
 }
 </style>

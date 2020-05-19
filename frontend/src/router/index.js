@@ -18,6 +18,7 @@ import multi_phenotype_search from '../components/gene_phenotype/multi_phenotype
 import gp_upload_file from '../components/gene_phenotype/gp_upload_file'
 import gp_search_result from '../components/gene_phenotype/gp_search_result'
 import gp_visualize from '../components/gene_phenotype/gp_visualize'
+import multi_search_result from '../components/gene_phenotype/multi_search_result'
 
 Vue.use(Router)
 
@@ -71,6 +72,11 @@ export default new Router({
           path: '/gp_search_result',
           name: 'gp_search_result',
           component: gp_search_result
+        },
+        {
+          path: '/multi_search_result',
+          name: 'multi_search_result',
+          component: multi_search_result
         },
         {
           path: '/gp_visualize',

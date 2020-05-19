@@ -55,10 +55,10 @@ export default {
 
 <style scoped>
 .el-menu-item.is-active {
-  color: #3CB371 !important;
+  color: #3cb371 !important;
 }
 
-.el-divider--horizontal{
-  margin:1px 0;
-} 
+.el-divider--horizontal {
+  margin: 1px 0;
+}
 </style>

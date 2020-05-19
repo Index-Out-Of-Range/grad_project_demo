@@ -3,25 +3,17 @@
     <el-row type="flex">
       <SideBar :side_bar_index="side_bar_index"></SideBar>
       <div style="width: 80%; margin-left: 5%;">
-        <div
-          style="text-align : left; font-size: 2em; color:#3CB371; font-weight:bold; margin-bottom: 2%;"
-        >
+        <div style="text-align : left; font-size: 2em; color:#3CB371; font-weight:bold; margin-bottom: 2%;">
           {{ $t('message.search.predict') }}
         </div>
-        <div
-          style="text-align : center; background: white; display:flex; flex-direction:column; color:#808080;"
-        >
+        <div style="text-align : center; background: white; display:flex; flex-direction:column; color:#808080;">
           <div style="font-size: 1.5em; padding: 2% 0;">
             {{ $t('message.search.title.title3') }}
           </div>
           <el-divider></el-divider>
           <div style="margin: 4% 20%;">
             <div>
-              <el-upload
-                drag
-                action="https://jsonplaceholder.typicode.com/posts/"
-                multiple
-              >
+              <el-upload drag action="https://jsonplaceholder.typicode.com/posts/" multiple>
                 <i class="el-icon-upload"></i>
                 <div class="el-upload__text">
                   {{ $t('message.search.upload_tip.tip1')
@@ -62,18 +54,26 @@ export default {
   margin: 5% 15%;
 }
 
-.el-divider--horizontal{
-  margin:1px 0;
+.el-divider--horizontal {
+  margin: 1px 0;
 }
 
-a:link {color:#A0B5D1;}      /* 未访问链接*/
-a:visited {color:#A0B5D1;}  /* 已访问链接 */
-a:hover {color:#A0B5D1;}  /* 鼠标移动到链接上 */
-a:active {color:#A0B5D1;}  /* 鼠标点击时 */
+a:link {
+  color: #a0b5d1;
+} /* 未访问链接*/
+a:visited {
+  color: #a0b5d1;
+} /* 已访问链接 */
+a:hover {
+  color: #a0b5d1;
+} /* 鼠标移动到链接上 */
+a:active {
+  color: #a0b5d1;
+} /* 鼠标点击时 */
 
-.el-button--primary{
+.el-button--primary {
   color: #fff;
-  background-color: #3CB371;
-  border-color: #3CB371;
+  background-color: #3cb371;
+  border-color: #3cb371;
 }
 </style>

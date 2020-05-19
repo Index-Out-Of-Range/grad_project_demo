@@ -44,33 +44,47 @@ export default {
   components: { SideBar },
   methods: {
     search() {
-      this.loading = true
-      this.$axios
-        .get(
-          'http://127.0.0.1:8000/api/search_phenotype?phenotype_name=' +
-            this.phenotype_input
-        )
-        .then(res => {
-          console.log(res)
-          if (res.status === 200) {
-            this.loading = false
-            this.$router.push({
-              name: 'gp_search_result',
-              params: {
-                para: {
-                  search_kind: '2',
-                  search_target: this.phenotype_input,
-                  known_data: res.data.known_results,
-                  predict_data: res.data.predict_results
-                }
-              }
-            })
-          } else {
-            this.$message.error('查询表型失败，请重试')
-            console.log(res.data.msg)
-          }
+      if (this.isNull(this.phenotype_input)) {
+        this.$message({
+          message: '输入不能为空',
+          type: 'warning'
         })
-        .catch(error => console.log(error))
+      } else {
+        this.loading = true
+        let phenotype_list = []
+        phenotype_list.push(this.phenotype_input)
+        console.log(phenotype_list)
+        const qs = require('qs')
+        this.$axios
+          .get(
+            'http://127.0.0.1:8000/api/search_phenotypes', {
+            params: { phenotype_list: phenotype_list },
+            paramsSerializer: function (params) {
+              return qs.stringify(params, { arrayFormat: 'repeat' })
+            }
+          })
+          .then(res => {
+            console.log(res)
+            if (res.status === 200) {
+              this.loading = false
+              this.$router.push({
+                name: 'multi_search_result',
+                params: {
+                  para: {
+                    search_kind: '2',
+                    search_target: phenotype_list,
+                    results: res.data.results,
+                    multi_gp_relations: res.data.multi_gp_relations
+                  }
+                }
+              })
+            } else {
+              this.$message.error('查询表型失败，请重试')
+              console.log(res.data.msg)
+            }
+          })
+          .catch(error => console.log(error))
+      }
     }
   }
 }
@@ -81,18 +95,26 @@ export default {
   margin: 5% 15%;
 }
 
-.el-divider--horizontal{
-  margin:1px 0;
+.el-divider--horizontal {
+  margin: 1px 0;
 }
 
-a:link {color:#A0B5D1;}      /* 未访问链接*/
-a:visited {color:#A0B5D1;}  /* 已访问链接 */
-a:hover {color:#A0B5D1;}  /* 鼠标移动到链接上 */
-a:active {color:#A0B5D1;}  /* 鼠标点击时 */
+a:link {
+  color: #a0b5d1;
+} /* 未访问链接*/
+a:visited {
+  color: #a0b5d1;
+} /* 已访问链接 */
+a:hover {
+  color: #a0b5d1;
+} /* 鼠标移动到链接上 */
+a:active {
+  color: #a0b5d1;
+} /* 鼠标点击时 */
 
-.el-button--primary{
+.el-button--primary {
   color: #fff;
-  background-color: #3CB371;
-  border-color: #3CB371;
+  background-color: #3cb371;
+  border-color: #3cb371;
 }
 </style>

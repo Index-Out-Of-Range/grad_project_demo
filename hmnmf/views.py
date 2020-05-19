@@ -12,7 +12,7 @@ import math
 
 from .models import Gene, Phenotype
 from hmnmf import tasks
-from .search_db import search_gene_from_db, search_phenotype_from_db
+from .search_db import search_gene_from_db, search_phenotype_from_db, multi_gp_relations, search_new_gp
 
 
 def insert_known_data_api(requests):
@@ -94,3 +94,113 @@ def search_phenotype(request):
         response['error_num'] = 1
     return JsonResponse(response)
 
+
+@require_http_methods(['GET'])
+def search_genes(request):
+    response = {}
+    try:
+        gene_list = request.GET.getlist('gene_list')
+        print('gene_list: ', gene_list)
+        response['results'] = []
+        gene_nodes = []
+        phenotype_nodes = []
+        for gene in gene_list:
+            known_results, predict_results = search_gene_from_db(int(gene))
+            response['results'].append({
+                'target': gene, 'known_results': known_results, 'predict_results': predict_results
+            })
+            if known_results and predict_results:
+                gene_nodes.append(int(gene))
+                if len(known_results) > 10:
+                    known_results = known_results[:10]
+                if len(predict_results) > 10:
+                    predict_results = predict_results[:10]
+                for result in known_results:
+                    phenotype_nodes.append(result['phenotype_name'])
+                for result in predict_results:
+                    phenotype_nodes.append(result['phenotype_name'])
+        phenotype_nodes = list(set(phenotype_nodes))
+        response['msg'] = 'success'
+        response['error_num'] = 0
+        response['multi_gp_relations'] = multi_gp_relations(gene_nodes, phenotype_nodes, 1)
+    except Exception as e:
+        response['msg'] = str(e)
+        response['error_num'] = 1
+    return JsonResponse(response)
+
+
+@require_http_methods(['GET'])
+def search_phenotypes(request):
+    response = {}
+    try:
+        phenotype_list = request.GET.getlist('phenotype_list')
+        print('phenotype_list: ', phenotype_list)
+        response['results'] = []
+        gene_nodes = []
+        phenotype_nodes = []
+        for phenotype in phenotype_list:
+            known_results, predict_results = search_phenotype_from_db(int(phenotype))
+            print(phenotype)
+            print(known_results)
+            print(predict_results)
+            response['results'].append({
+                'target': phenotype, 'known_results': known_results, 'predict_results': predict_results
+            })
+            if known_results and predict_results:
+                phenotype_nodes.append(int(phenotype))
+                if len(known_results) > 10:
+                    known_results = known_results[:10]
+                if len(predict_results) > 10:
+                    predict_results = predict_results[:10]
+                for result in known_results:
+                    gene_nodes.append(result['gene_name'])
+                for result in predict_results:
+                    gene_nodes.append(result['gene_name'])
+        gene_nodes = list(set(gene_nodes))
+        response['msg'] = 'success'
+        response['error_num'] = 0
+        response['multi_gp_relations'] = multi_gp_relations(gene_nodes, phenotype_nodes, 2)
+    except Exception as e:
+        response['msg'] = str(e)
+        response['error_num'] = 1
+    return JsonResponse(response)
+
+
+@require_http_methods(['GET'])
+def add_gene(request):
+    response = {}
+    try:
+        gene_nodes = request.GET.getlist('gene_nodes')
+        phenotype_nodes = request.GET.getlist('phenotype_nodes')
+        add_type = request.GET.get('add_type')
+        print('add_type: ', add_type)
+        print('gene_nodes: ', gene_nodes)
+        print('phenotype_nodes: ', phenotype_nodes)
+        new_gp_relation = search_new_gp(gene_nodes, phenotype_nodes, add_type)
+        response['msg'] = 'success'
+        response['error_num'] = 0
+        response['new_gp_relation'] = new_gp_relation
+    except Exception as e:
+        response['msg'] = str(e)
+        response['error_num'] = 1
+    return JsonResponse(response)
+
+
+@require_http_methods(['GET'])
+def add_phenotype(request):
+    response = {}
+    try:
+        gene_nodes = request.GET.getlist('gene_nodes')
+        phenotype_nodes = request.GET.getlist('phenotype_nodes')
+        add_type = request.GET.get('add_type')
+        print('add_type: ', add_type)
+        print('gene_nodes: ', gene_nodes)
+        print('phenotype_nodes: ', phenotype_nodes)
+        new_gp_relation = search_new_gp(gene_nodes, phenotype_nodes, add_type)
+        response['msg'] = 'success'
+        response['error_num'] = 0
+        response['new_gp_relation'] = new_gp_relation
+    except Exception as e:
+        response['msg'] = str(e)
+        response['error_num'] = 1
+    return JsonResponse(response)

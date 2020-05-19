@@ -19,10 +19,10 @@
         </div>
       </div>
     </el-row>
-    <el-row v-loading="loading" v-else>
+    <el-row v-else>
       <div style="display:flex; justify-content:space-between; padding:2%;">
         <div style="text-align:left; font-size: 2em; font-weight:bold;">
-          {{search_type}} ID: #{{ search_target }}
+          {{search_kind==='1'?'GENE':'PHENOTYPE'}} ID: #{{ search_target }}
         </div>
       </div>
       <el-divider></el-divider>
@@ -133,7 +133,6 @@ export default {
   data() {
     return {
       search_kind: '',
-      search_type: '',
       search_target: '',
       save_data: {},
       loading: false,
@@ -532,7 +531,7 @@ export default {
         known_data: this.known_data,
         all_predict_data: this.all_predict_data,
         all_known_data: this.all_known_data,
-        empty_result: this.empty_result
+        empty_result: this.empty_result,
       }
       sessionStorage.setItem('save_data', JSON.stringify(this.save_data))
       sessionStorage.setItem('visualize_data', JSON.stringify(this.save_data))
@@ -556,7 +555,9 @@ export default {
         filename = 'all_result_' + this.search_target + '.json'
       }
       var FileSaver = require('file-saver')
-      var blob = new Blob([JSON.stringify(data, null, 4)], { type: 'text/plain;charset=utf-8' })
+      var blob = new Blob([JSON.stringify(data, null, 4)], {
+        type: 'text/plain;charset=utf-8'
+      })
       FileSaver.saveAs(blob, filename)
     }
   }

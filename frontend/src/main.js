@@ -70,6 +70,8 @@ import {
   RadioGroup
 } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
+import echarts from 'echarts'
+import gp_function from './functions/gp_function'
 
 Vue.use(VueI18n)
 Vue.use(Radio)
@@ -150,7 +152,6 @@ Vue.prototype.$axios = axios
 Vue.config.productionTip = false
 Vue.use(mavonEditor)
 
-import echarts from 'echarts'
 Vue.prototype.$echarts = echarts
 const i18n = new VueI18n({
   locale: 'zh-CN',
@@ -159,6 +160,8 @@ const i18n = new VueI18n({
     'en-US': Object.assign(require('@/components/common/lang/en'), enLocale)
   }
 })
+
+Vue.use(gp_function)
 
 router.beforeEach((to, from, next) => {
     if (store.state.username && to.path.startsWith('/admin')) {
