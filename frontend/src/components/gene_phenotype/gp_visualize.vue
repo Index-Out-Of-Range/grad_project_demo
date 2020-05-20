@@ -8,19 +8,19 @@
     <div style="padding: 0 2%;">
       <el-row style="display:flex; margin:2% 0; justify-content:space-between;">
         <el-input style="width:60%;" :placeholder="$t('message.visulization.search_tips.add_gene')" v-model="addGene" clearable></el-input>
-        <el-button type="primary" style="width:20%;" icon="el-icon-circle-plus-outline" @click="add_gene">{{ $t('message.visulization.buttons.add_gene') }}</el-button>
+        <el-button type="primary" style="width:25%;" icon="el-icon-circle-plus-outline" @click="add_gene">{{ $t('message.visulization.buttons.add_gene') }}</el-button>
       </el-row>
       <el-row style="display:flex; margin:2% 0; justify-content:space-between;">
         <el-input style="width:60%;" :placeholder="$t('message.visulization.search_tips.add_phenotype')" v-model="addPhenotype" clearable></el-input>
-        <el-button type="primary" style="width:20%;" icon="el-icon-circle-plus-outline" @click="add_phenotype">{{ $t('message.visulization.buttons.add_phenotype') }}</el-button>
+        <el-button type="primary" style="width:25%;" icon="el-icon-circle-plus-outline" @click="add_phenotype">{{ $t('message.visulization.buttons.add_phenotype') }}</el-button>
       </el-row>
       <el-row style="display:flex; margin:2% 0; justify-content:space-between;">
         <el-input style="width:60%;" :placeholder="$t('message.visulization.search_tips.remove_gene')" v-model="removeGene" clearable></el-input>
-        <el-button type="danger" style="width:20%;" icon="el-icon-remove-outline" @click="remove_gene">{{ $t('message.visulization.buttons.remove_gene') }}</el-button>
+        <el-button type="danger" style="width:25%;" icon="el-icon-remove-outline" @click="remove_gene">{{ $t('message.visulization.buttons.remove_gene') }}</el-button>
       </el-row>
       <el-row style="display:flex; margin:2% 0; justify-content:space-between;">
         <el-input style="width:60%;" :placeholder="$t('message.visulization.search_tips.remove_phenotype')" v-model="removePhenotype" clearable></el-input>
-        <el-button type="danger" style="width:20%;" icon="el-icon-remove-outline" @click="remove_phenotype">{{ $t('message.visulization.buttons.remove_phenotype') }}</el-button>
+        <el-button type="danger" style="width:25%;" icon="el-icon-remove-outline" @click="remove_phenotype">{{ $t('message.visulization.buttons.remove_phenotype') }}</el-button>
       </el-row>
     </div>
   </div>
@@ -58,7 +58,7 @@ export default {
       this.all_results = this.visualize_data['all_results']
       this.all_multi_gp_relations = this.visualize_data['all_multi_gp_relations']
     } else {
-      this.$message.error('出错！！！')
+      this.$message.error(this.$t('message.message_tip.error_tip'))
     }
 
     this.update_data()
@@ -82,6 +82,7 @@ export default {
     },
     draw_chart() {
       let my_chart = this.$echarts.init(document.getElementById('my_chart'))
+      let that = this
       let option = {
         title: {
           text: this.$t('message.visulization.predict_result')
@@ -90,9 +91,17 @@ export default {
           trigger: 'item',
           formatter: function (param) {
             if (param.data.value !== undefined) {
-              return '节点' + param.data.source + '与节点' + param.data.target + '之间的关联是:' + param.data.value
+              if (that.$i18n.locale === 'zh-CN') {
+                return '节点' + param.data.source + '与节点' + param.data.target + '之间的关联是:' + param.data.value
+              } else if (that.$i18n.locale === 'en-US') {
+                return 'The relation between ' + param.data.source + ' and ' + param.data.target + ' is : ' + param.data.value
+              }
             } else {
-              return '节点:' + param.data.name
+              if (that.$i18n.locale === 'zh-CN') {
+                return '节点 : ' + param.data.name
+              } else if (that.$i18n.locale === 'en-US') {
+                return 'Node : ' + param.data.name
+              }
             }
           }
         },
@@ -150,7 +159,6 @@ export default {
         ]
       }
       my_chart.setOption(option, true)
-      let that = this
       const qs = require('qs')
       my_chart.on('click', function (param) {
         if (param.dataType === 'node') {
@@ -191,7 +199,7 @@ export default {
                   ]
                   my_chart.setOption(option, true)
                 } else {
-                  this.$message.error('查询基因失败，请重试')
+                  this.$message.error(this.$t('message.message_tip.search_gene_fail_tip'))
                   console.log(res.data.msg)
                 }
               })
@@ -233,7 +241,7 @@ export default {
                   ]
                   my_chart.setOption(option, true)
                 } else {
-                  this.$message.error('查询表型失败，请重试')
+                  this.$message.error(this.$t('message.message_tip.search_phenotype_fail_tip'))
                   console.log(res.data.msg)
                 }
               })
@@ -336,7 +344,7 @@ export default {
     },
     add_gene() {
       if (this.isNull(this.addGene)) {
-        this.$message({ message: '输入不能为空', type: 'warning' })
+        this.$message({ message: this.$t('message.message_tip.not_null_tip'), type: 'warning' })
         return
       }
 
@@ -347,7 +355,7 @@ export default {
       gene_nodes.push(this.addGene)
       if (this.search_kind === '1') {
         if (this.search_target.indexOf(this.addGene) > -1) {
-          this.$message({ message: '该基因已在图中', type: 'warning' })
+          this.$message({ message: this.$t('message.message_tip.gene_exist_tip'), type: 'warning' })
           return
         }
         let flag = false
@@ -371,7 +379,7 @@ export default {
           flag = true
         }
         if (genes.indexOf(this.addGene) > -1) {
-          this.$message({ message: '该基因已在图中', type: 'warning' })
+          this.$message({ message: this.$t('message.message_tip.gene_exist_tip'), type: 'warning' })
           return
         }
         for (let key1 in this.all_multi_gp_relations) {
@@ -390,7 +398,7 @@ export default {
           this.loading = false
           let new_gp_relation = res.data.new_gp_relation
           if (new_gp_relation.length === 0) {
-            this.$message({ message: '数据库中没有该基因', type: 'warning' })
+            this.$message({ message: this.$t('message.message_tip.no_gene_in_db'), type: 'warning' })
             return
           }
           if (this.search_kind === '1') {
@@ -412,14 +420,14 @@ export default {
           this.update_chart()
           this.addGene = ''
         } else {
-          this.$message.error('查询基因失败，请重试')
+          this.$message.error(this.$t('message.message_tip.search_gene_fail_tip'))
           console.log(res.data.msg)
         }
       }).catch(error => console.log(error))
     },
     add_phenotype() {
       if (this.isNull(this.addPhenotype)) {
-        this.$message({ message: '输入不能为空', type: 'warning' })
+        this.$message({ message: this.$t('message.message_tip.not_null_tip'), type: 'warning' })
         return
       }
 
@@ -440,7 +448,7 @@ export default {
           flag = true
         }
         if (phenotypes.indexOf(this.addPhenotype) > -1) {
-          this.$message({ message: '该表型已在图中', type: 'warning' })
+          this.$message({ message: this.$t('message.message_tip.phenotype_exist_tip'), type: 'warning' })
           return
         }
         for (let key1 in this.all_multi_gp_relations) {
@@ -448,7 +456,7 @@ export default {
         }
       } else if (this.search_kind === '2') {
         if (this.search_target.indexOf(this.addPhenotype) > -1) {
-          this.$message({ message: '该表型已在图中', type: 'warning' })
+          this.$message({ message: this.$t('message.message_tip.phenotype_exist_tip'), type: 'warning' })
           return
         }
         let flag = false
@@ -473,7 +481,7 @@ export default {
           this.loading = false
           let new_gp_relation = res.data.new_gp_relation
           if (new_gp_relation.length === 0) {
-            this.$message({ message: '数据库中没有该表型', type: 'warning' })
+            this.$message({ message: this.$t('message.message_tip.no_phenotype_in_db'), type: 'warning' })
             return
           }
           if (this.search_kind === '1') {
@@ -495,18 +503,18 @@ export default {
           this.update_chart()
           this.addPhenotype = ''
         } else {
-          this.$message.error('查询基因失败，请重试')
+          this.$message.error(this.$t('message.message_tip.search_phenotype_fail_tip'))
           console.log(res.data.msg)
         }
       }).catch(error => console.log(error))
     },
     remove_gene() {
       if (this.isNull(this.removeGene)) {
-        this.$message({ message: '输入不能为空', type: 'warning' })
+        this.$message({ message: this.$t('message.message_tip.not_null_tip'), type: 'warning' })
         return
       }
       if (this.search_kind === '1') {
-        this.$message({ message: '请不要删除基因节点', type: 'warning' })
+        this.$message({ message: this.$t('message.message_tip.delete_gene_tip'), type: 'warning' })
         return
       }
       if (this.search_kind === '2') {
@@ -520,21 +528,21 @@ export default {
           }
         }
         if (!gene_delete) {
-          this.$message({ message: '图中没有该基因节点', type: 'warning' })
+          this.$message({ message: this.$t('message.message_tip.no_gene_in_figure'), type: 'warning' })
           return
         }
       }
       this.removeGene = ''
-      this.$message({ message: '删除成功', type: 'success' })
+      this.$message({ message: this.$t('message.message_tip.remove_success'), type: 'success' })
       this.update_chart()
     },
     remove_phenotype() {
       if (this.isNull(this.removePhenotype)) {
-        this.$message({ message: '输入不能为空', type: 'warning' })
+        this.$message({ message: this.$t('message.message_tip.not_null_tip'), type: 'warning' })
         return
       }
       if (this.search_kind === '2') {
-        this.$message({ message: '请不要删除表型节点', type: 'warning' })
+        this.$message({ message: this.$t('message.message_tip.delete_phenotype_tip'), type: 'warning' })
         return
       }
       if (this.search_kind === '1') {
@@ -548,12 +556,12 @@ export default {
           }
         }
         if (!phenotype_delete) {
-          this.$message({ message: '图中没有该表型节点', type: 'warning' })
+          this.$message({ message: this.$t('message.message_tip.no_phenotype_in_figure'), type: 'warning' })
           return
         }
       }
       this.removePhenotype = ''
-      this.$message({ message: '删除成功', type: 'success' })
+      this.$message({ message: this.$t('message.message_tip.remove_success'), type: 'success' })
       this.update_chart()
     },
     update_chart() {

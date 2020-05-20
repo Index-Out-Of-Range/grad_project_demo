@@ -4,6 +4,7 @@ module.exports = {
     system_name: 'BIAPMC',
     zh: '中文',
     en: '英文',
+    search_btn: '搜索',
     home: {
       version: '版本',
       login: '登录',
@@ -101,7 +102,28 @@ module.exports = {
         known_nodes: '已知节点',
         predict_nodes: '预测节点'
       }
+    },
+    message_tip: {
+      not_null_tip: '输入不能为空',
+      search_gene_fail_tip: '查询基因失败，请重试',
+      search_phenotype_fail_tip: '查询表型失败，请重试',
+      delete_info: {
+        confirm_info: '无法撤回！确定删除？',
+        ok: '确定',
+        cancel: '取消',
+        success_info: '删除成功',
+        cancel_info: '取消删除'
+      },
+      error_tip: 'Error!',
+      gene_exist_tip: '该基因已在图中',
+      phenotype_exist_tip: '该表型已在图中',
+      no_gene_in_db: '数据库中没有该基因',
+      no_phenotype_in_db: '数据库中没有该表型',
+      delete_gene_tip: '请不要删除基因节点',
+      delete_phenotype_tip: '请不要删除表型节点',
+      no_gene_in_figure: '图中没有该基因',
+      no_phenotype_in_figure: '图中没有该表型',
+      remove_success: '删除成功！'
     }
-
   }
 }

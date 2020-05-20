@@ -153,8 +153,12 @@ Vue.config.productionTip = false
 Vue.use(mavonEditor)
 
 Vue.prototype.$echarts = echarts
+let lang = window.sessionStorage.getItem('lang')
+if (!lang) {
+  lang = 'zh-CN'
+}
 const i18n = new VueI18n({
-  locale: 'zh-CN',
+  locale: lang,
   messages: {
     'zh-CN': Object.assign(require('@/components/common/lang/zh'), zhLocale),
     'en-US': Object.assign(require('@/components/common/lang/en'), enLocale)

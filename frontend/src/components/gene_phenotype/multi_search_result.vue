@@ -37,8 +37,8 @@
             </div>
             <div>
               <div style="display:flex; justify-content:flex-end; margin:3% 0;">
-                <el-input v-model="known_data_list[index].knownTableSearchID" placeholder="请输入ID / Name" prefix-icon="el-icon-search" clearable @change="changeKnownInput(index)" style="width:40%;"></el-input>
-                <el-button type="primary" @click="knownFilter(index)">搜索</el-button>
+                <el-input v-model="known_data_list[index].knownTableSearchID" :placeholder="$t('message.search.tip.tip1')" prefix-icon="el-icon-search" clearable @change="changeKnownInput(index)" style="width:40%;"></el-input>
+                <el-button type="primary" @click="knownFilter(index)">{{ $t('message.search_btn') }}</el-button>
               </div>
               <el-table :data="known_data_list[index].knownTableCurrentData" stripe style="" border>
                 <el-table-column :label="$t('message.search_result.table.index')" type="index" width="60" align="center"></el-table-column>
@@ -69,8 +69,8 @@
             </div>
             <div>
               <div style="display:flex; justify-content:flex-end; margin:3% 0;">
-                <el-input v-model="predict_data_list[index].predictTableSearchID" placeholder="请输入ID / Name" prefix-icon="el-icon-search" clearable @change="changePredictInput(index)" style="width:40%;"></el-input>
-                <el-button type="primary" @click="predictFilter(index)">搜索</el-button>
+                <el-input v-model="predict_data_list[index].predictTableSearchID" :placeholder="$t('message.search.tip.tip1')" prefix-icon="el-icon-search" clearable @change="changePredictInput(index)" style="width:40%;"></el-input>
+                <el-button type="primary" @click="predictFilter(index)">{{ $t('message.search_btn') }}</el-button>
               </div>
               <el-table :data="predict_data_list[index].predictTableCurrentData" stripe style="" border>
                 <el-table-column :label="$t('message.search_result.table.index')" type="index" width="60" align="center"></el-table-column>
@@ -163,7 +163,7 @@ export default {
     },
     knownFilter(index) {
       if (this.known_data_list[index].knownTableSearchID === '') {
-        this.$message.warning('查询条件不能为空！')
+        this.$message.warning(this.$t('message.message_tip.not_null_tip'))
         return
       }
       this.known_data_list[index].knownTableCurrentData = []
@@ -215,7 +215,7 @@ export default {
     },
     predictFilter(index) {
       if (this.predict_data_list[index].predictTableSearchID === '') {
-        this.$message.warning('查询条件不能为空！')
+        this.$message.warning(this.$t('message.message_tip.not_null_tip'))
         return
       }
       this.predict_data_list[index].predictTableCurrentData = []
@@ -290,7 +290,7 @@ export default {
             this.save_all_data()
             this.update_table_data()
           } else {
-            this.$message.error('查询表型失败，请重试')
+            this.$message.error(this.$t('message.message_tip.search_phenotype_fail_tip'))
             console.log(res.data.msg)
           }
         })
@@ -316,7 +316,7 @@ export default {
             this.save_all_data()
             this.update_table_data()
           } else {
-            this.$message.error('查询基因失败，请重试')
+            this.$message.error(this.$t('message.message_tip.search_gene_fail_tip'))
             console.log(res.data.msg)
           }
         })
@@ -330,9 +330,9 @@ export default {
       this.handleKnownCurrentChange(1, index)
     },
     handleKnownDelete(s_index, row, index) {
-      this.$confirm('无法撤回！确定删除？', {
-        confirmBtnText: '确定',
-        cancelBtnText: '取消',
+      this.$confirm(this.$t('message.message_tip.delete_info.confirm_info'), {
+        confirmBtnText: this.$t('message.message_tip.delete_info.ok'),
+        cancelBtnText: this.$t('message.message_tip.delete_info.cancel'),
         type: 'warning'
       })
         .then(() => {
@@ -342,13 +342,13 @@ export default {
           this.save_all_data()
           this.$message({
             type: 'success',
-            message: '删除成功!'
+            message: this.$t('message.message_tip.delete_info.success_info')
           })
         })
         .catch(() => {
           this.$message({
             type: 'info',
-            message: '取消删除'
+            message: this.$t('message.message_tip.delete_info.cancel_info')
           })
         })
     },
@@ -359,9 +359,9 @@ export default {
       this.handlePredictCurrentChange(1, index)
     },
     handlePredictDelete(s_index, row, index) {
-      this.$confirm('无法撤回！确定删除？', {
-        confirmBtnText: '确定',
-        cancelBtnText: '取消',
+      this.$confirm(this.$t('message.message_tip.delete_info.confirm_info'), {
+        confirmBtnText: this.$t('message.message_tip.delete_info.ok'),
+        cancelBtnText: this.$t('message.message_tip.delete_info.cancel'),
         type: 'warning'
       })
         .then(() => {
@@ -371,13 +371,13 @@ export default {
           this.save_all_data()
           this.$message({
             type: 'success',
-            message: '删除成功!'
+            message: this.$t('message.message_tip.delete_info.success_info')
           })
         })
         .catch(() => {
           this.$message({
             type: 'info',
-            message: '取消删除'
+            message: this.$t('message.message_tip.delete_info.cancel_info')
           })
         })
     },

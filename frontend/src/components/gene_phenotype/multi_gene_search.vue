@@ -51,7 +51,7 @@ export default {
     search_genes() {
       if (this.isNull(this.multi_gene_input)) {
         this.$message({
-          message: '输入不能为空',
+          message: this.$t('message.message_tip.not_null_tip'),
           type: 'warning'
         })
       } else {
@@ -84,7 +84,7 @@ export default {
                 }
               })
             } else {
-              this.$message.error('查询基因失败，请重试')
+              this.$message.error(this.$t('message.message_tip.search_gene_fail_tip'))
               console.log(res.data.msg)
             }
           })

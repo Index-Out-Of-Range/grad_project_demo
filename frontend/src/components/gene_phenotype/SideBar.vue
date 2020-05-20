@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-row>
+    <el-row style="text-align:left;">
       <el-menu :default-active="side_bar_index" router>
         <el-menu-item index="/single_gene_search">
           <i class="el-icon-search"></i>
@@ -41,7 +41,7 @@ export default {
   },
   methods: {},
   props: ['side_bar_index'],
-  mounted: function() {
+  mounted: function () {
     // 获得第一级路由，以设置导航栏高亮
     var x = this.$route.path.indexOf('/', 1)
     if (x !== -1) {

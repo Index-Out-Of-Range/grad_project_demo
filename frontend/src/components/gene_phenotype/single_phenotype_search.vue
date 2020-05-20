@@ -46,7 +46,7 @@ export default {
     search() {
       if (this.isNull(this.phenotype_input)) {
         this.$message({
-          message: '输入不能为空',
+          message: this.$t('message.message_tip.not_null_tip'),
           type: 'warning'
         })
       } else {
@@ -79,7 +79,7 @@ export default {
                 }
               })
             } else {
-              this.$message.error('查询表型失败，请重试')
+              this.$message.error(this.$t('message.message_tip.search_phenotype_fail_tip'))
               console.log(res.data.msg)
             }
           })

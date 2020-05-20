@@ -1,9 +1,10 @@
 module.exports = {
   message: {
-    language: 'Select Language',
+    language: 'Language',
     system_name: 'BIAPMC',
     zh: 'Chinese',
     en: 'English',
+    search_btn: 'search',
     home: {
       version: 'VERSION',
       login: 'LOGIN',
@@ -48,11 +49,11 @@ module.exports = {
         tip2: 'Please input ID / Name, one per line.'
       },
       subtitle: {
-        gene: 'Gene ID/Name',
-        phenotype: 'Phenotype ID/Name'
+        gene: 'Gene ID / Name',
+        phenotype: 'Phenotype ID / Name'
       },
       upload_tip: {
-        tip1: 'Drag file to here, or',
+        tip1: 'Drag file to here, or ',
         tip2: 'click to upload',
         tip3: 'please upload .mat file'
       }
@@ -101,7 +102,28 @@ module.exports = {
         known_nodes: 'Known Nodes',
         predict_nodes: 'Predict Nodes'
       }
+    },
+    message_tip: {
+      not_null_tip: 'Input can not be empty',
+      search_gene_fail_tip: 'Gene query failed, please try again',
+      search_phenotype_fail_tip: 'Phenotype query failed, please try again',
+      delete_info: {
+        confirm_info: "Can't withdraw! confirm delete?",
+        ok: 'OK',
+        cancel: 'Cancel',
+        success_info: 'Successfully deleted',
+        cancel_info: 'Cancel delete'
+      },
+      error_tip: 'Error!',
+      gene_exist_tip: 'The gene is already in the figure',
+      phenotype_exist_tip: 'The phenotype is already in the figure',
+      no_gene_in_db: 'The gene is not in the database',
+      no_phenotype_in_db: 'The phenotype is not in the database',
+      delete_gene_tip: "Please don't delete the gene node",
+      delete_phenotype_tip: "Please don't delete the phenotype node",
+      no_gene_in_figure: 'The gene is not in the figure',
+      no_phenotype_in_figure: 'The phenotype is not in the figure',
+      remove_success: 'Remove success!'
     }
-
   }
 }
