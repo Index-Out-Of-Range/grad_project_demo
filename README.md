@@ -1,6 +1,9 @@
 ## grad_project_demo
 毕业设计算法嵌入django并且实现接口以及前后端交互
 
+**最终结果展示**
+[![项目展示](https://res.cloudinary.com/marcomontalbano/image/upload/v1590086652/video_to_markdown/images/youtube--ellpR483Bk0-c05b58ac6eb4c4700831b2b3070cd403.jpg)](https://youtu.be/ellpR483Bk0 "项目展示")
+
 #### 2020年4月14日19点34分
 初步效果展示如下
 
@@ -29,3 +32,6 @@
 第五次修改，完善i18n
 * 也不放图了，等我写完文件上传预测一块放吧
 * 写代码本来应该是一件高兴的事情，就像在玩一个养成类游戏，见证一个项目的从无到有。但是在各种因素的影响下，再高兴的事情也会让人厌烦
+
+#### 2020年5月22日01点49分
+第六次修改，实现文件的上传、预测、下载结果
