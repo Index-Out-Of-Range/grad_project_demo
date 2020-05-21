@@ -131,6 +131,7 @@ export default {
           {
             type: 'graph',
             layout: 'force',
+            // layoutAnimation: true,
             focusNodeAdjacency: true,
             roam: true,
             edgeSymbolSize: [10, 10],

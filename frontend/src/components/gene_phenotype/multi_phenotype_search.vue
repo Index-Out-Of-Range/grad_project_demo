@@ -19,8 +19,9 @@
             </el-input>
             <div style="margin-top: 2%; text-align: right;">
               <div>
-                ({{ $t('message.search.search_example') }}: &nbsp;<a href="/#">#1</a>
-                &nbsp; <a href="/#">#2</a>)
+                ({{ $t('message.search.search_example') }}: &nbsp;
+                <a href="javascript:void(0);" @click="handleClick1">#1</a> &nbsp;
+                <a href="javascript:void(0);" @click="handleClick2">#2</a>)
               </div>
             </div>
             <div style="margin-top:10%;">
@@ -48,6 +49,12 @@ export default {
   },
   components: { SideBar },
   methods: {
+    handleClick1() {
+      this.multi_phenotype_input = '81\n200029'
+    },
+    handleClick2() {
+      this.multi_phenotype_input = '750\n1266\n8090'
+    },
     search_phenotypes() {
       if (this.isNull(this.multi_phenotype_input)) {
         this.$message({

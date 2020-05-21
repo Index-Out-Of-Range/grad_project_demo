@@ -30,3 +30,8 @@ class Predict_GP_Relation(models.Model):
     gene = models.ForeignKey('Gene', on_delete=models.CASCADE)
     phenotype = models.ForeignKey('Phenotype', on_delete=models.CASCADE)
     gp_predict_relation = models.DecimalField(max_digits=10, decimal_places=6)
+
+
+class Predict_Process(models.Model):
+    process_key = models.CharField(max_length=64, primary_key=True)
+    process = models.IntegerField()

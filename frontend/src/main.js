@@ -148,6 +148,7 @@ axios.defaults.baseURL = 'http://localhost:8443/api'
 // 使请求带上凭证信息
 axios.defaults.withCredentials = true
 
+axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
 Vue.prototype.$axios = axios
 Vue.config.productionTip = false
 Vue.use(mavonEditor)

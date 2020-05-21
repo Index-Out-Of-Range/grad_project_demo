@@ -330,13 +330,14 @@ export default {
       this.handleKnownCurrentChange(1, index)
     },
     handleKnownDelete(s_index, row, index) {
+      console.log(s_index, row, index)
       this.$confirm(this.$t('message.message_tip.delete_info.confirm_info'), {
         confirmBtnText: this.$t('message.message_tip.delete_info.ok'),
         cancelBtnText: this.$t('message.message_tip.delete_info.cancel'),
         type: 'warning'
       })
         .then(() => {
-          this.results[index].known_results.splice(index, 1)
+          this.results[index].known_results.splice(s_index, 1)
           this.known_data_list[index].knownTotalItems = this.results[index].known_results.length
           this.handleKnownCurrentChange(this.known_data_list[index].knownCurrentPage, index)
           this.save_all_data()
@@ -365,7 +366,7 @@ export default {
         type: 'warning'
       })
         .then(() => {
-          this.results[index].predict_results.splice(index, 1)
+          this.results[index].predict_results.splice(s_index, 1)
           this.predict_data_list[index].predictTotalItems = this.results[index].predict_results.length
           this.handlePredictCurrentChange(this.predict_data_list[index].predictCurrentPage, index)
           this.save_all_data()

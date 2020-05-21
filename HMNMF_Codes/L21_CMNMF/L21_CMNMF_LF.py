@@ -1,7 +1,8 @@
 import numpy
+from django.core.cache import cache
 
 
-def L21_CMNMF_LF(MaxIter, A1, A2, G, P1, P2, M, Y1, Y2, alpha, beta, gamma, miu, rou):
+def L21_CMNMF_LF(MaxIter, A1, A2, G, P1, P2, M, Y1, Y2, alpha, beta, gamma, miu, rou, process_key):
     # L为目标函数值
     D1 = numpy.diag(numpy.sum(M, axis=1))
     D2 = numpy.diag(numpy.sum(M, axis=0))
@@ -19,6 +20,9 @@ def L21_CMNMF_LF(MaxIter, A1, A2, G, P1, P2, M, Y1, Y2, alpha, beta, gamma, miu,
     t = 1
     for j in range(1, MaxIter + 1):
         print('Iter=' + str(j))
+        print('process_key: ' + str(process_key))
+        cache.set(process_key, j - 1)
+        print('cache.get(process_key): ' + str(cache.get(process_key)))
 
         # update E1
         B = Y1 * (A1 - numpy.dot(G, P1)) + (1 / miu) * Lambda1

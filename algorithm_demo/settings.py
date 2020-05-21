@@ -121,6 +121,16 @@ DATABASES = {
     }
 }
 
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': 'redis://127.0.0.1:6379',
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        },
+    },
+}
+
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
 
@@ -157,6 +167,8 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+UPLOAD_FILE_ROOT = os.path.join(BASE_DIR, 'upload_files').replace('\\', '/')
+UPLOAD_FILE_URL = '/upload_files/'
 
 # Broker的地址
 CELERY_BROKER_URL = 'redis://127.0.0.1:6379'

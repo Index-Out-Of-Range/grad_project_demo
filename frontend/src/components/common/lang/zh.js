@@ -31,6 +31,7 @@ module.exports = {
     search: {
       search: '查询',
       predict: '预测',
+      upload: '上传',
       menu: {
         menu1: '单个基因查询',
         menu2: '单个表型查询',
@@ -123,7 +124,19 @@ module.exports = {
       delete_phenotype_tip: '请不要删除表型节点',
       no_gene_in_figure: '图中没有该基因',
       no_phenotype_in_figure: '图中没有该表型',
-      remove_success: '删除成功！'
+      remove_success: '删除成功！',
+
+      file_type_tip: '只能上传.mat类型的文件',
+      file_upload_success_tip: '文件上传成功',
+      file_num_tip: '最多只能上传一个文件',
+      file_upload_fail_tip: '文件上传失败',
+      select_file_tip: '请先选择文件',
+      file_upload_retry_tip: '文件上传失败，请重试',
+      upload_file_tip: '请先上传文件',
+      predict_file_fail_tip: '预测失败，请重试',
+      download_file_fail_tip: '下载文件失败，请重试',
+      get_process_fail_tip: '获取进度失败，请重试',
+      get_file_link_tip: '获取文件链接失败，请重试'
     }
   }
 }

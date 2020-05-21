@@ -6,6 +6,8 @@ import datetime
 from .learn import learn
 from .test import test
 from .result_to_db import data_to_db
+from algorithm_demo import settings
+from django.core.cache import cache
 
 
 def l21_cmnmf(parameter_cell):
@@ -23,12 +25,18 @@ def l21_cmnmf(parameter_cell):
     file_num = parameter_cell['file_num']
     K = parameter_cell['feature_num']
     hier_del = parameter_cell['hier_del']
+    user_file_path = parameter_cell['user_file_path']
+    process_key = parameter_cell['process_key']
 
     # load data
-    if not partition:
-        path = 'HMNMF_Codes/2_useful_data/' + dataset + '/' + dataset + '.mat'
+    if user_file_path:
+        path = user_file_path
     else:
-        path = 'HMNMF_Codes/2_useful_data/' + dataset + '/' + dataset + '_partition/' + dataset + str(partition) + '.mat'
+        if not partition:
+            path = 'HMNMF_Codes/2_useful_data/' + dataset + '/' + dataset + '.mat'
+        else:
+            path = 'HMNMF_Codes/2_useful_data/' + dataset + '/' + dataset + '_partition/' + dataset + str(partition) + '.mat'
+    print("what's path? ", path)
     data = scipy.io.loadmat(path)
     M = data['M']
     if hier_del == 1:
@@ -65,7 +73,7 @@ def l21_cmnmf(parameter_cell):
                             dataset, partition]
     time_start = time.time()
     (learned_matrix_cell, best_parameter_array, evaluation_result, loss, learned_matrix_cells) = learn(
-        input_parameter_cell, matrix_cell_train, matrix_cell_validation, initial_matrixFileName_cell)
+        input_parameter_cell, matrix_cell_train, matrix_cell_validation, initial_matrixFileName_cell, process_key)
     time_end = time.time()
     print('时间已过', time_end - time_start, '秒')
 
@@ -78,6 +86,8 @@ def l21_cmnmf(parameter_cell):
                              evaluation_result, max_ites, alpha_set, beta_set, gamma_set, miu_set, rou_set, hier_del]
     time_end = time.time()
     print('时间已过', time_end - time_start, '秒')
+
+    cache.set(process_key, 100)
 
     if partition == 0:
         result_file_name = method_dir + 'old_result/' + dataset + '/L21_CMNMF_result_' + getTimeStr() + '.mat'
@@ -92,7 +102,15 @@ def l21_cmnmf(parameter_cell):
                       'beta_set': beta_set, 'gamma_set': gamma_set, 'miu_set': miu_set, 'rou_set': rou_set,
                       'hier_del': hier_del})
 
-    return "Prediction Successuful!!!"
+    print('1111111111111111111111111111111')
+    print(cache.get(process_key))
+    result_file_path = process_key + '_result_file_path'
+    print(result_file_path)
+    cache.set(result_file_path, os.path.join(os.getcwd() + '/' + result_file_name).replace('\\', '/'))
+    print(os.path.join(os.getcwd() + '/' + result_file_name).replace('\\', '/'))
+    return os.path.join(os.getcwd() + '/' + result_file_name).replace('\\', '/')
+
+    # return ["Prediction Successuful!!!", os.getcwd(), result_file_name]
 
 
 def get_files(get_files_parameter_cell):

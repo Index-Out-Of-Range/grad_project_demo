@@ -15,12 +15,13 @@
             <div style="margin-bottom:2%; text-align: left;">
               <div>{{ $t('message.search.subtitle.gene') }} :</div>
             </div>
-            <el-input prefix-icon="el-icon-search" v-model="gene_input">
+            <el-input prefix-icon="el-icon-search" v-model="gene_input" clearable>
             </el-input>
             <div style="margin-top: 2%; text-align: right;">
               <div>
-                ({{ $t('message.search.search_example') }}: &nbsp;<a href="/#">#1</a>
-                &nbsp; <a href="/#">#2</a>)
+                ({{ $t('message.search.search_example') }}: &nbsp;
+                <a href="javascript:void(0);" @click="handleClick1">#1</a> &nbsp;
+                <a href="javascript:void(0);" @click="handleClick2">#2</a>)
               </div>
             </div>
             <div style="margin-top:10%;">
@@ -46,6 +47,12 @@ export default {
   },
   components: { SideBar },
   methods: {
+    handleClick1() {
+      this.gene_input = '16'
+    },
+    handleClick2() {
+      this.gene_input = '100131801'
+    },
     search() {
       if (this.isNull(this.gene_input)) {
         this.$message({

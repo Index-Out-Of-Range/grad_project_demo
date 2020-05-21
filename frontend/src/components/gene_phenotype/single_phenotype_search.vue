@@ -11,13 +11,13 @@
             <div style="margin-bottom:2%; text-align: left;">
               <div>{{ $t('message.search.subtitle.phenotype') }} :</div>
             </div>
-            <el-input prefix-icon="el-icon-search" v-model="phenotype_input"></el-input>
+            <el-input prefix-icon="el-icon-search" v-model="phenotype_input" clearable></el-input>
             <div style="margin-top: 2%; text-align: right;">
               <div>
                 ({{ $t('message.search.search_example') }}: &nbsp;
-                <a href="/#">#1</a>
+                <a href="javascript:void(0);" @click="handleClick1">#1</a>
                 &nbsp;
-                <a href="/#">#2</a>)
+                <a href="javascript:void(0);" @click="handleClick2">#2</a>)
               </div>
             </div>
             <div style="margin-top:10%;">
@@ -43,6 +43,12 @@ export default {
   },
   components: { SideBar },
   methods: {
+    handleClick1() {
+      this.phenotype_input = '81'
+    },
+    handleClick2() {
+      this.phenotype_input = '200029'
+    },
     search() {
       if (this.isNull(this.phenotype_input)) {
         this.$message({

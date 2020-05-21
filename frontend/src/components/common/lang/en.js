@@ -31,6 +31,7 @@ module.exports = {
     search: {
       search: 'SEARCH',
       predict: 'PREDICT',
+      upload: 'UPLOAD',
       menu: {
         menu1: 'Single Gene Search',
         menu2: 'Single Phenotype Search',
@@ -123,7 +124,19 @@ module.exports = {
       delete_phenotype_tip: "Please don't delete the phenotype node",
       no_gene_in_figure: 'The gene is not in the figure',
       no_phenotype_in_figure: 'The phenotype is not in the figure',
-      remove_success: 'Remove success!'
+      remove_success: 'Remove success!',
+
+      file_type_tip: 'Only files of type ".mat" can be uploaded',
+      file_upload_success_tip: 'File uploaded successfully',
+      file_num_tip: 'You can only upload at most one file',
+      file_upload_fail_tip: 'File upload failed',
+      select_file_tip: 'Please select the file first',
+      file_upload_retry_tip: 'File upload failed, please try again',
+      upload_file_tip: 'Please upload the file first',
+      predict_file_fail_tip: 'Prediction failed, please try again',
+      download_file_fail_tip: 'File download failed, please try again',
+      get_process_fail_tip: 'Failed to get progress, please try again',
+      get_file_link_tip: 'Failed to get file link, please try again'
     }
   }
 }

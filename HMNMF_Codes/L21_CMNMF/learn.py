@@ -4,7 +4,7 @@ from .L21_CMNMF_Train import L21_CMNMF_Train
 from .L21_CMNMF_Evaluate import L21_CMNMF_Evaluate
 
 
-def learn(input_parameter_cell, matrix_cell_train, matrix_cell_validation, initial_matrixFileName_cell):
+def learn(input_parameter_cell, matrix_cell_train, matrix_cell_validation, initial_matrixFileName_cell, process_key):
     [alpha_set, beta_set, gamma_set, miu_set, rou_set, max_ites, cv_criteria, method_dir, dataset,
      partition] = input_parameter_cell
     i = 1
@@ -24,7 +24,7 @@ def learn(input_parameter_cell, matrix_cell_train, matrix_cell_validation, initi
         # (evaluation_result[i - 1][0: evaluation_num], evaluation_result_all[i - 1][:][0: evaluation_num],
         # loss[i - 1][:], learned_matrix_cells[i - 1][:]) = cv_train(cv_parameter_cell, matrix_cell_train,
         # matrix_cell_validation, initial_matrixFileName_cell)
-        (r1, r2, r3, r4) = cv_train(cv_parameter_cell, matrix_cell_train, matrix_cell_validation, initial_matrixFileName_cell)
+        (r1, r2, r3, r4) = cv_train(cv_parameter_cell, matrix_cell_train, matrix_cell_validation, initial_matrixFileName_cell, process_key)
         evaluation_result[i - 1][0: evaluation_num]=r1
         evaluation_result_all[i - 1][:][0][0: evaluation_num] = r2[0]
         loss[i - 1][:] = r3
@@ -40,7 +40,7 @@ def learn(input_parameter_cell, matrix_cell_train, matrix_cell_validation, initi
     return learned_matrix_cell, best_parameter_array, evaluation_result, loss, learned_matrix_cells
 
 
-def cv_train(cv_parameter_cell, matrix_cell_train, matrix_cell_validation, initial_matrixFileName_cell):
+def cv_train(cv_parameter_cell, matrix_cell_train, matrix_cell_validation, initial_matrixFileName_cell, process_key):
     train_parameter_cell = cv_parameter_cell
     method_dir = cv_parameter_cell[7]
     dataset = cv_parameter_cell[8]
@@ -60,7 +60,7 @@ def cv_train(cv_parameter_cell, matrix_cell_train, matrix_cell_validation, initi
         file_name = method_data_dir + initial_matrixFileName_cell[j]
         data = scipy.io.loadmat(file_name)
         initial_matrix_cell = [data['G'], data['P1'], data['P2']]
-        learned_matrix_cell = L21_CMNMF_Train(train_parameter_cell, matrix_cell_train, initial_matrix_cell)
+        learned_matrix_cell = L21_CMNMF_Train(train_parameter_cell, matrix_cell_train, initial_matrix_cell, process_key)
         evaluation_result[j] = L21_CMNMF_Evaluate(learned_matrix_cell, matrix_cell_validation, train_parameter_cell)
         loss[0][j] = learned_matrix_cell[0]
         learned_matrix_cells[j][0] = learned_matrix_cell
