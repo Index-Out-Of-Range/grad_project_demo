@@ -51,7 +51,7 @@ export default {
       this.gene_input = '16'
     },
     handleClick2() {
-      this.gene_input = '100131801'
+      this.gene_input = '4-aminobutyrate aminotransferase'
     },
     search() {
       if (this.isNull(this.gene_input)) {

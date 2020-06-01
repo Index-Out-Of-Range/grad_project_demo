@@ -53,7 +53,7 @@ export default {
       this.multi_gene_input = '16\n100131801'
     },
     handleClick2() {
-      this.multi_gene_input = '5277\n10847\n79784'
+      this.multi_gene_input = 'ATP binding cassette subfamily A member 1\nATP binding cassette subfamily A member 3\nATP binding cassette subfamily B member 7'
     },
     search_genes() {
       if (this.isNull(this.multi_gene_input)) {

@@ -47,7 +47,7 @@ export default {
       this.phenotype_input = '81'
     },
     handleClick2() {
-      this.phenotype_input = '200029'
+      this.phenotype_input = 'Urinary incontinence'
     },
     search() {
       if (this.isNull(this.phenotype_input)) {

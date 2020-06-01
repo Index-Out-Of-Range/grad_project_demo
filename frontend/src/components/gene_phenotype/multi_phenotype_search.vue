@@ -53,7 +53,7 @@ export default {
       this.multi_phenotype_input = '81\n200029'
     },
     handleClick2() {
-      this.multi_phenotype_input = '750\n1266\n8090'
+      this.multi_phenotype_input = 'Nephropathy\nNephrocalcinosis\nNephritis'
     },
     search_phenotypes() {
       if (this.isNull(this.multi_phenotype_input)) {
@@ -128,5 +128,4 @@ a:active {
   background-color: #3cb371;
   border-color: #3cb371;
 }
-
 </style>
