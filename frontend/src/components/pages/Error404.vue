@@ -1,25 +1,29 @@
 <template>
-    <div class="error-page">
-      <div style="padding:100px 500px 0px 0px">
-        <img src="../../assets/img/icon/404.png" class="error-tag">
-      </div>
+  <div>
+    <div style="margin: 10%; font-weight: bold; font-size: 30px;">
+      404 Page Not Found
     </div>
+    <el-button type="primary" @click="goToIndex"> 返回首页 </el-button>
+  </div>
 </template>
 
 <script>
-    export default {
-        name: 'Error404'
+export default {
+  name: 'Error404',
+  methods: {
+    goToIndex() {
+      this.$router.push({
+        name: 'Default'
+      })
     }
+  }
+}
 </script>
 
 <style scoped>
-  .error-page {
-    background:url("../../assets/img/bg/bg2.jpg") no-repeat;
-    background-position: center;
-    margin: 0;
-    height: 100%;
-    width: 100%;
-    background-size: cover;
-    position: fixed;
-  }
+.el-button--primary {
+  color: #fff;
+  background-color: #3cb371;
+  border-color: #3cb371;
+}
 </style>

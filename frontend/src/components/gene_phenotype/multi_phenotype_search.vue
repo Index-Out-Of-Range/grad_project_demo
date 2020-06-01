@@ -24,7 +24,7 @@
                 <a href="javascript:void(0);" @click="handleClick2">#2</a>)
               </div>
             </div>
-            <div style="margin-top:10%;">
+            <div style="margin-top:8%;">
               <el-button type="primary" icon="el-icon-search" round @click="search_phenotypes">{{
                 $t('message.search.search')
               }}</el-button>
@@ -128,4 +128,5 @@ a:active {
   background-color: #3cb371;
   border-color: #3cb371;
 }
+
 </style>

@@ -20,7 +20,7 @@
                 <a href="javascript:void(0);" @click="handleClick2">#2</a>)
               </div>
             </div>
-            <div style="margin-top:10%;">
+            <div style="margin-top:8%;">
               <el-button @click="search()" type="primary" icon="el-icon-search" round>{{ $t('message.search.search') }}</el-button>
             </div>
           </div>

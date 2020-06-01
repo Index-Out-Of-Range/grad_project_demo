@@ -18,25 +18,27 @@ import math
 
 from .models import Gene, Phenotype
 from hmnmf import tasks
-from .search_db import search_gene_from_db, search_phenotype_from_db, multi_gp_relations, search_new_gp
+from .search_db import search_gene_from_db, search_phenotype_from_db, multi_gp_relations, search_new_gp, search_target_info, judge_arg
 
 
 def insert_known_data_api(requests):
-    res = tasks.insert_known_data.delay()
-    async = AsyncResult(id=res.id, app=app)
-    while async.successful():
-        result = async.get()
-        print(result)
-    return HttpResponse('Insert known data successfully!!!')
+    # res = tasks.insert_known_data.delay()
+    # async = AsyncResult(id=res.id, app=app)
+    # while async.successful():
+    #     result = async.get()
+    #     print(result)
+    # return HttpResponse('Insert known data successfully!!!')
+    pass
 
 
 def insert_predict_data_api(requests):
-    res = tasks.insert_predict_data.delay()
-    async = AsyncResult(id=res.id, app=app)
-    while async.successful():
-        result = async.get()
-        print(result)
-    return HttpResponse('Insert predict data successfully!!!')
+    # res = tasks.insert_predict_data.delay()
+    # async = AsyncResult(id=res.id, app=app)
+    # while async.successful():
+    #     result = async.get()
+    #     print(result)
+    # return HttpResponse('Insert predict data successfully!!!')
+    pass
 
 
 def hmnmf_api(requests):
@@ -113,20 +115,27 @@ def search_genes(request):
         gene_nodes = []
         phenotype_nodes = []
         for gene in gene_list:
-            known_results, predict_results = search_gene_from_db(int(gene))
-            response['results'].append({
-                'target': gene, 'known_results': known_results, 'predict_results': predict_results
-            })
-            if known_results and predict_results:
-                gene_nodes.append(int(gene))
-                if len(known_results) > 10:
-                    known_results = known_results[:10]
-                if len(predict_results) > 10:
-                    predict_results = predict_results[:10]
-                for result in known_results:
-                    phenotype_nodes.append(result['phenotype_name'])
-                for result in predict_results:
-                    phenotype_nodes.append(result['phenotype_name'])
+            target_info = search_target_info(1, gene)
+            if target_info != {}:
+                gene_id = target_info['id']
+                known_results, predict_results = search_gene_from_db(gene_id)
+                response['results'].append({
+                    'search_target': gene, 'search_target_info': target_info, 'known_results': known_results, 'predict_results': predict_results
+                })
+                if known_results and predict_results:
+                    gene_nodes.append(gene_id)
+                    if len(known_results) > 5:
+                        known_results = known_results[:5]
+                    if len(predict_results) > 5:
+                        predict_results = predict_results[:5]
+                    for result in known_results:
+                        phenotype_nodes.append(result['phenotype_id'])
+                    for result in predict_results:
+                        phenotype_nodes.append(result['phenotype_id'])
+            else:
+                response['results'].append({
+                    'search_target': gene, 'search_target_info': {}, 'known_results': [], 'predict_results': []
+                })
         phenotype_nodes = list(set(phenotype_nodes))
         response['msg'] = 'success'
         response['error_num'] = 0
@@ -147,23 +156,27 @@ def search_phenotypes(request):
         gene_nodes = []
         phenotype_nodes = []
         for phenotype in phenotype_list:
-            known_results, predict_results = search_phenotype_from_db(int(phenotype))
-            print(phenotype)
-            print(known_results)
-            print(predict_results)
-            response['results'].append({
-                'target': phenotype, 'known_results': known_results, 'predict_results': predict_results
-            })
-            if known_results and predict_results:
-                phenotype_nodes.append(int(phenotype))
-                if len(known_results) > 10:
-                    known_results = known_results[:10]
-                if len(predict_results) > 10:
-                    predict_results = predict_results[:10]
-                for result in known_results:
-                    gene_nodes.append(result['gene_name'])
-                for result in predict_results:
-                    gene_nodes.append(result['gene_name'])
+            target_info = search_target_info(2, phenotype)
+            if target_info != {}:
+                phenotype = target_info['id']
+                known_results, predict_results = search_phenotype_from_db(phenotype)
+                response['results'].append({
+                    'search_target': phenotype, 'search_target_info': target_info, 'known_results': known_results, 'predict_results': predict_results
+                })
+                if known_results and predict_results:
+                    phenotype_nodes.append(phenotype)
+                    if len(known_results) > 5:
+                        known_results = known_results[:5]
+                    if len(predict_results) > 5:
+                        predict_results = predict_results[:5]
+                    for result in known_results:
+                        gene_nodes.append(result['gene_id'])
+                    for result in predict_results:
+                        gene_nodes.append(result['gene_id'])
+            else:
+                response['results'].append({
+                    'search_target': phenotype, 'search_target_info': target_info, 'known_results': [], 'predict_results': []
+                })
         gene_nodes = list(set(gene_nodes))
         response['msg'] = 'success'
         response['error_num'] = 0
@@ -184,9 +197,14 @@ def add_gene(request):
         print('add_type: ', add_type)
         print('gene_nodes: ', gene_nodes)
         print('phenotype_nodes: ', phenotype_nodes)
+        target_info = search_target_info(1, gene_nodes[0])
+        if not judge_arg(gene_nodes[0]):
+            if target_info != {}:
+                gene_nodes = [target_info['id']]
         new_gp_relation = search_new_gp(gene_nodes, phenotype_nodes, add_type)
         response['msg'] = 'success'
         response['error_num'] = 0
+        response['search_target_info'] = target_info
         response['new_gp_relation'] = new_gp_relation
     except Exception as e:
         response['msg'] = str(e)
@@ -204,9 +222,14 @@ def add_phenotype(request):
         print('add_type: ', add_type)
         print('gene_nodes: ', gene_nodes)
         print('phenotype_nodes: ', phenotype_nodes)
+        target_info = search_target_info(2, phenotype_nodes[0])
+        if not judge_arg(phenotype_nodes[0]):
+            if target_info != {}:
+                phenotype_nodes = [target_info['id']]
         new_gp_relation = search_new_gp(gene_nodes, phenotype_nodes, add_type)
         response['msg'] = 'success'
         response['error_num'] = 0
+        response['search_target_info'] = target_info
         response['new_gp_relation'] = new_gp_relation
     except Exception as e:
         response['msg'] = str(e)
@@ -253,7 +276,7 @@ def predict_file(request):
         process_key = request.GET.get('process_key')
         print('file_path: ', upload_file_path)
         print('process_key: ', process_key)
-        cache.set(process_key, 0, 30*60)
+        cache.set(process_key, 0, 30 * 60)
         # return JsonResponse(response)
         parameter_cell = {
             'method_dir': 'HMNMF_Codes/L21_CMNMF/',
@@ -312,7 +335,7 @@ def get_result_file_path(request):
     try:
         process_key = request.GET.get('process_key')
         print('process_key: ', process_key)
-        result_file_path = process_key+'_result_file_path'
+        result_file_path = process_key + '_result_file_path'
         print(result_file_path)
         print('222: ', cache.get(result_file_path))
         response['result_file_path'] = cache.get(result_file_path)

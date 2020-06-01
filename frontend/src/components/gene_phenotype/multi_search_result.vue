@@ -8,13 +8,13 @@
     <div>
       <div style="padding:2%;" v-for="(result,index) in results" :key="index">
         <div style="text-align:left; font-size: 2em; font-weight:bold;">
-          {{search_kind==='1'?'GENE':'PHENOTYPE'}} ID: #{{ result['target'] }}
+          {{search_kind==='1'?'GENE':'PHENOTYPE'}} ID: #{{ result['search_target'] }}
         </div>
         <el-divider></el-divider>
         <div v-if="empty_result_list[index]">
           <div style="display:flex; align-items: center; font-size: 20px;justify-content:center;margin: 3% 10%;">
             {{ $t('message.search_result.tip.tip1') }}
-            <div style="color:red;">#{{ result['target'] }}</div>
+            <div style="color:red;">#{{ result['search_target'] }}</div>
             {{ $t('message.search_result.tip.tip2') }}
           </div>
         </div>
@@ -24,7 +24,7 @@
               {{ $t('message.search_result.detail') }} :
             </div>
             <div>
-              <el-table :data="target_detail(result['target'])" :show-header="false" border>
+              <el-table :data="target_detail(result['search_target_info'])" :show-header="false" border>
                 <el-table-column prop="Attributes" width="100"> </el-table-column>
                 <el-table-column prop="Content"> </el-table-column>
               </el-table>
@@ -37,17 +37,18 @@
             </div>
             <div>
               <div style="display:flex; justify-content:flex-end; margin:3% 0;">
-                <el-input v-model="known_data_list[index].knownTableSearchID" :placeholder="$t('message.search.tip.tip1')" prefix-icon="el-icon-search" clearable @change="changeKnownInput(index)" style="width:40%;"></el-input>
+                <el-input v-model="known_data_list[index].knownTableSearchContent" :placeholder="$t('message.search.tip.tip1')" prefix-icon="el-icon-search" clearable @change="changeKnownInput(index)" style="width:40%;"></el-input>
                 <el-button type="primary" @click="knownFilter(index)">{{ $t('message.search_btn') }}</el-button>
               </div>
               <el-table :data="known_data_list[index].knownTableCurrentData" stripe style="" border>
                 <el-table-column :label="$t('message.search_result.table.index')" type="index" width="60" align="center"></el-table-column>
-                <el-table-column prop="Name" label="Name" align="center">
-                  -
+                <el-table-column v-if="column_gene" prop="gene_id" label="ID" align="center">
                 </el-table-column>
-                <el-table-column v-if="column_gene" prop="gene_name" label="ID" align="center">
+                <el-table-column v-if="column_phenotype" prop="phenotype_id" label="ID" align="center">
                 </el-table-column>
-                <el-table-column v-if="column_phenotype" prop="phenotype_name" label="ID" align="center">
+                <el-table-column v-if="column_gene" prop="gene_name" label="Name" align="center">
+                </el-table-column>
+                <el-table-column v-if="column_phenotype" prop="phenotype_name" label="Name" align="center">
                 </el-table-column>
                 <el-table-column prop="gp_relation" :label="$t('message.search_result.table.relation')" align="center">
                 </el-table-column>
@@ -69,17 +70,18 @@
             </div>
             <div>
               <div style="display:flex; justify-content:flex-end; margin:3% 0;">
-                <el-input v-model="predict_data_list[index].predictTableSearchID" :placeholder="$t('message.search.tip.tip1')" prefix-icon="el-icon-search" clearable @change="changePredictInput(index)" style="width:40%;"></el-input>
+                <el-input v-model="predict_data_list[index].predictTableSearchContent" :placeholder="$t('message.search.tip.tip1')" prefix-icon="el-icon-search" clearable @change="changePredictInput(index)" style="width:40%;"></el-input>
                 <el-button type="primary" @click="predictFilter(index)">{{ $t('message.search_btn') }}</el-button>
               </div>
               <el-table :data="predict_data_list[index].predictTableCurrentData" stripe style="" border>
                 <el-table-column :label="$t('message.search_result.table.index')" type="index" width="60" align="center"></el-table-column>
-                <el-table-column prop="Name" label="Name" align="center">
-                  -
+                <el-table-column v-if="column_gene" prop="gene_id" label="ID" align="center">
                 </el-table-column>
-                <el-table-column v-if="column_gene" prop="gene_name" label="ID" align="center">
+                <el-table-column v-if="column_phenotype" prop="phenotype_id" label="ID" align="center">
                 </el-table-column>
-                <el-table-column v-if="column_phenotype" prop="phenotype_name" label="ID" align="center">
+                <el-table-column v-if="column_gene" prop="gene_name" label="Name" align="center">
+                </el-table-column>
+                <el-table-column v-if="column_phenotype" prop="phenotype_name" label="Name" align="center">
                 </el-table-column>
                 <el-table-column prop="gp_relation" :label="$t('message.search_result.table.relation')" sortable align="center">
                 </el-table-column>
@@ -157,12 +159,13 @@ export default {
         multi_gp_relations: this.multi_gp_relations,
         all_results: this.all_results,
         all_multi_gp_relations: this.all_multi_gp_relations,
+        empty_result_list: this.empty_result_list
       }
       sessionStorage.setItem('save_data', JSON.stringify(this.save_genes_data))
       sessionStorage.setItem('visualize_data', JSON.stringify(this.save_genes_data))
     },
     knownFilter(index) {
-      if (this.known_data_list[index].knownTableSearchID === '') {
+      if (this.isNull(this.known_data_list[index].knownTableSearchContent)) {
         this.$message.warning(this.$t('message.message_tip.not_null_tip'))
         return
       }
@@ -170,17 +173,31 @@ export default {
       this.known_data_list[index].knownFilterTableData = []
       this.results[index].known_results.forEach((value, index_1) => {
         if (this.search_kind === '2') {
-          if (value.gene_name) {
-            if (String(value.gene_name).indexOf(this.known_data_list[index].knownTableSearchID) >= 0) {
-              this.known_data_list[index].knownFilterTableData.push(value)
+          if (this.isNum(this.known_data_list[index].knownTableSearchContent)) {
+            if (value.gene_id) {
+              if (String(value.gene_id).indexOf(this.known_data_list[index].knownTableSearchContent) >= 0) {
+                this.known_data_list[index].knownFilterTableData.push(value)
+              }
+            }
+          } else {
+            if (value.gene_name) {
+              if (String(value.gene_name).indexOf(this.known_data_list[index].knownTableSearchContent) >= 0) {
+                this.known_data_list[index].knownFilterTableData.push(value)
+              }
             }
           }
         } else if (this.search_kind === '1') {
-          if (value.phenotype_name) {
-            if (
-              String(value.phenotype_name).indexOf(this.known_data_list[index].knownTableSearchID) >= 0
-            ) {
-              this.known_data_list[index].knownFilterTableData.push(value)
+          if (this.isNum(this.known_data_list[index].knownTableSearchContent)) {
+            if (value.phenotype_id) {
+              if (String(value.phenotype_id).indexOf(this.known_data_list[index].knownTableSearchContent) >= 0) {
+                this.known_data_list[index].knownFilterTableData.push(value)
+              }
+            }
+          } else {
+            if (value.phenotype_name) {
+              if (String(value.phenotype_name).indexOf(this.known_data_list[index].knownTableSearchContent) >= 0) {
+                this.known_data_list[index].knownFilterTableData.push(value)
+              }
             }
           }
         }
@@ -214,7 +231,7 @@ export default {
       this.handleKnownCurrentChange(1, index)
     },
     predictFilter(index) {
-      if (this.predict_data_list[index].predictTableSearchID === '') {
+      if (this.isNull(this.predict_data_list[index].predictTableSearchContent)) {
         this.$message.warning(this.$t('message.message_tip.not_null_tip'))
         return
       }
@@ -222,19 +239,39 @@ export default {
       this.predict_data_list[index].predictFilterTableData = []
       this.results[index].predict_results.forEach((value, index_1) => {
         if (this.search_kind === '2') {
-          if (value.gene_name) {
-            if (
-              String(value.gene_name).indexOf(this.predict_data_list[index].predictTableSearchID) >= 0
-            ) {
-              this.predict_data_list[index].predictFilterTableData.push(value)
+          if (this.isNum(this.predict_data_list[index].predictTableSearchContent)) {
+            if (value.gene_id) {
+              if (
+                String(value.gene_id).indexOf(this.predict_data_list[index].predictTableSearchContent) >= 0
+              ) {
+                this.predict_data_list[index].predictFilterTableData.push(value)
+              }
+            }
+          } else {
+            if (value.gene_name) {
+              if (
+                String(value.gene_name).indexOf(this.predict_data_list[index].predictTableSearchContent) >= 0
+              ) {
+                this.predict_data_list[index].predictFilterTableData.push(value)
+              }
             }
           }
         } else if (this.search_kind === '1') {
-          if (value.phenotype_name) {
-            if (
-              String(value.phenotype_name).indexOf(this.predict_data_list[index].predictTableSearchID) >= 0
-            ) {
-              this.predict_data_list[index].predictFilterTableData.push(value)
+          if (this.isNum(this.predict_data_list[index].predictTableSearchContent)) {
+            if (value.phenotype_id) {
+              if (
+                String(value.phenotype_id).indexOf(this.predict_data_list[index].predictTableSearchContent) >= 0
+              ) {
+                this.predict_data_list[index].predictFilterTableData.push(value)
+              }
+            }
+          } else {
+            if (value.phenotype_name) {
+              if (
+                String(value.phenotype_name).indexOf(this.predict_data_list[index].predictTableSearchContent) >= 0
+              ) {
+                this.predict_data_list[index].predictFilterTableData.push(value)
+              }
             }
           }
         }
@@ -271,7 +308,7 @@ export default {
       const qs = require('qs')
       if (this.search_kind === '1') {
         let phenotype_list = []
-        phenotype_list.push(row.phenotype_name)
+        phenotype_list.push(row.phenotype_id)
         this.$axios.get('http://127.0.0.1:8000/api/search_phenotypes', {
           params: { phenotype_list: phenotype_list },
           paramsSerializer: function (params) {
@@ -297,7 +334,7 @@ export default {
           .catch(error => console.log(error))
       } else if (this.search_kind === '2') {
         let gene_list = []
-        gene_list.push(row.gene_name)
+        gene_list.push(row.gene_id)
         this.$axios.get('http://127.0.0.1:8000/api/search_genes', {
           params: { gene_list: gene_list },
           paramsSerializer: function (params) {
@@ -386,19 +423,19 @@ export default {
       let table_num = this.search_target.length
       for (let i = 0; i < table_num; i++) {
         this.known_data_list.push({
-          knownTableSearchID: '',
+          knownTableSearchContent: '',
           knownTableCurrentData: [],
           knownCurrentPage: 1,
-          knownPageSize: 10,
+          knownPageSize: 5,
           knownTotalItems: 0,
           knownFilterTableData: [],
           knownFlag: false
         })
         this.predict_data_list.push({
-          predictTableSearchID: '',
+          predictTableSearchContent: '',
           predictTableCurrentData: [],
           predictCurrentPage: 1,
-          predictPageSize: 10,
+          predictPageSize: 5,
           predictTotalItems: 0,
           predictFilterTableData: [],
           predictFlag: false
@@ -485,6 +522,7 @@ export default {
       this.search_kind = this.save_genes_data['search_kind']
       this.search_target = this.save_genes_data['search_target']
       this.results = this.save_genes_data['results']
+      this.empty_result_list = this.save_genes_data['empty_result_list']
       this.multi_gp_relations = this.save_genes_data['multi_gp_relations']
       this.all_results = this.save_genes_data['all_results']
       this.all_multi_gp_relations = this.save_genes_data['all_multi_gp_relations']
@@ -504,12 +542,15 @@ export default {
     target_detail() {
       return function (target) {
         return [
-          { Attributes: 'Name', Content: '-' },
-          { Attributes: 'ID', Content: target },
-          { Attributes: 'Detail', Content: '-' }
+          { Attributes: 'Name', Content: target['name'] },
+          { Attributes: 'ID', Content: target['id'] },
+          { Attributes: 'Detail', Content: target['detail'] }
         ]
       }
     }
+  },
+  watch: {
+
   }
 }
 </script>

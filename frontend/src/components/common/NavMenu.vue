@@ -21,7 +21,7 @@
       </div>
     </el-row>
     <el-row type="flex" align="middle" justify="space-between" style="padding:0 15%; font-size:1.5em; background-color:white">
-      <div style="display:flex; align-items:center; font-weight:bold;">
+      <div style="display:flex; align-items:center; font-weight:bold; cursor: pointer;" @click="goToIndex">
         <img src="../../assets/img/icon/Home.png" style="height:10%;width:10%;margin:0 2%;" />
         <p>{{ $t('message.system_name') }}</p>
       </div>
@@ -74,11 +74,17 @@ export default {
         this.$i18n.locale = 'en-US'
         window.sessionStorage.setItem('lang', 'en-US')
       }
+    },
+    goToIndex() {
+      this.$router.push({
+        name: 'Default'
+      })
+      this.path = this.$route.path
     }
   },
   mounted: function () {
     // 获得第一级路由，以设置导航栏高亮
-    var x = this.$route.path.indexOf('/', 1)
+    let x = this.$route.path.indexOf('/', 1)
     if (x !== -1) {
       this.path = this.$route.path.substring(0, x)
     } else {
@@ -89,6 +95,16 @@ export default {
     hoverBackground() {
       return '#ffd04b'
     }
+  },
+  watch: {
+    // $route(to, from) {
+    //   let x = to.path.indexOf('/', 1)
+    //   if (x !== -1) {
+    //     this.path = this.$route.path.substring(0, x)
+    //   } else {
+    //     this.path = this.$route.path
+    //   }
+    // }
   }
 }
 </script>

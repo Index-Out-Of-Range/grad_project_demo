@@ -17,5 +17,12 @@ export default{
       }
       return list
     }
+    Vue.prototype.isNum = function (str) {
+      var n = Number(str)
+      if (!isNaN(n)) {
+        return true
+      }
+      return false
+    }
   }
 }

@@ -1,0 +1,1 @@
+{'id': '0001651', 'name': 'Dextrocardia', 'def': 'The heart is located in the right hand sided hemithorax. That is, there is a left-right reversal (or \\"mirror reflection\\") of the anatomical location of the heart in which the heart is locate on the right side instead of the left.'}

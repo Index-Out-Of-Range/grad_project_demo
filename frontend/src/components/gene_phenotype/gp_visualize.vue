@@ -98,9 +98,9 @@ export default {
               }
             } else {
               if (that.$i18n.locale === 'zh-CN') {
-                return '节点 : ' + param.data.name
+                return '节点 : ' + param.data.label
               } else if (that.$i18n.locale === 'en-US') {
-                return 'Node : ' + param.data.name
+                return 'Node : ' + param.data.label
               }
             }
           }
@@ -131,7 +131,7 @@ export default {
           {
             type: 'graph',
             layout: 'force',
-            // layoutAnimation: true,
+            layoutAnimation: true,
             focusNodeAdjacency: true,
             roam: true,
             edgeSymbolSize: [10, 10],
@@ -266,12 +266,15 @@ export default {
           { name: 'PREDICT PHENOTYPE' },
           { name: 'KNOWN PHENOTYPE' }
         ]
-        for (let i = 0; i < this.search_target.length; i++) {
-          this.nodes.push({
-            name: this.search_target[i],
-            symbolSize: 80,
-            category: 'GENE'
-          })
+        for (let i = 0; i < this.all_results.length; i++) {
+          if (JSON.stringify(this.all_results[i]['search_target_info']) !== '{}') {
+            this.nodes.push({
+              name: this.all_results[i]['search_target_info']['id'],
+              label: this.all_results[i]['search_target_info']['name'],
+              symbolSize: 80,
+              category: 'GENE'
+            })
+          }
         }
       } else if (this.search_kind === '2') {
         this.categories = [
@@ -279,19 +282,32 @@ export default {
           { name: 'PREDICT GENE' },
           { name: 'KNOWN GENE' }
         ]
-        for (let i = 0; i < this.search_target.length; i++) {
-          this.nodes.push({
-            name: this.search_target[i],
-            symbolSize: 80,
-            category: 'PHENOTYPE'
-          })
+        for (let i = 0; i < this.all_results.length; i++) {
+          if (JSON.stringify(this.all_results[i]['search_target_info']) !== '{}') {
+            this.nodes.push({
+              name: this.all_results[i]['search_target_info']['id'],
+              label: this.all_results[i]['search_target_info']['name'],
+              symbolSize: 80,
+              category: 'PHENOTYPE'
+            })
+          }
         }
       }
 
       for (var key1 in this.all_multi_gp_relations) {
+        let key1_source = String(key1)
+        if (!this.isNum(key1)) {
+          for (let i = 0; i < this.all_results.length; i++) {
+            if (key1 === this.all_results[i]['search_target_info']['name']) {
+              key1_source = String(this.all_results[i]['search_target_info']['id'])
+              break
+            }
+          }
+        }
         for (var key2 in this.all_multi_gp_relations[key1]) {
           var node = {
             name: key2,
+            label: this.all_multi_gp_relations[key1][key2]['name'],
             symbolSize: 50
           }
           if (this.all_multi_gp_relations[key1][key2]['type'] === 'predict') {
@@ -301,7 +317,7 @@ export default {
               node['category'] = 'PREDICT GENE'
             }
             let link = {
-              source: String(key1),
+              source: key1_source,
               target: String(key2),
               value: this.all_multi_gp_relations[key1][key2]['relation'],
               lineStyle: {
@@ -322,7 +338,7 @@ export default {
               node['category'] = 'KNOWN GENE'
             }
             let link = {
-              source: String(key1),
+              source: key1_source,
               target: String(key2),
               value: this.all_multi_gp_relations[key1][key2]['relation'],
               lineStyle: {
@@ -387,6 +403,7 @@ export default {
           phenotype_nodes.push(key1)
         }
       }
+
       this.loading = true
       this.$axios.get('http://127.0.0.1:8000/api/add_gene', {
         params: { gene_nodes: gene_nodes, phenotype_nodes: phenotype_nodes, add_type: add_type },
@@ -407,15 +424,16 @@ export default {
             temp_relation[String(new_gp_relation[0]['gene'])] = {}
             for (let i = 0, len = new_gp_relation.length; i < len; i++) {
               let item = new_gp_relation[i]
-              temp_relation[String(item['gene'])][String(item['phenotype'])] = { 'relation': item['gp_relation'], 'type': item['type'] }
+              temp_relation[String(item['gene'])][String(item['phenotype'])] = { 'name': item['name'], 'relation': item['gp_relation'], 'type': item['type'] }
             }
             for (var key1 in temp_relation) {
               this.all_multi_gp_relations[key1] = temp_relation[key1]
             }
             this.search_target.push(this.addGene)
+            this.all_results.push({ 'search_target_info': res.data.search_target_info })
           } else if (this.search_kind === '2') {
             for (let i = 0, len = new_gp_relation.length; i < len; i++) {
-              this.all_multi_gp_relations[new_gp_relation[i]['phenotype']][new_gp_relation[i]['gene']] = { 'relation': new_gp_relation[i]['gp_relation'], 'type': new_gp_relation[i]['type'] }
+              this.all_multi_gp_relations[new_gp_relation[i]['phenotype']][new_gp_relation[i]['gene']] = { 'name': res.data.search_target_info['name'], 'relation': new_gp_relation[i]['gp_relation'], 'type': new_gp_relation[i]['type'] }
             }
           }
           this.update_chart()
@@ -487,18 +505,19 @@ export default {
           }
           if (this.search_kind === '1') {
             for (let i = 0, len = new_gp_relation.length; i < len; i++) {
-              this.all_multi_gp_relations[new_gp_relation[i]['gene']][new_gp_relation[i]['phenotype']] = { 'relation': new_gp_relation[i]['gp_relation'], 'type': new_gp_relation[i]['type'] }
+              this.all_multi_gp_relations[new_gp_relation[i]['gene']][new_gp_relation[i]['phenotype']] = { 'name': res.data.search_target_info['name'], 'relation': new_gp_relation[i]['gp_relation'], 'type': new_gp_relation[i]['type'] }
             }
           } else if (this.search_kind === '2') {
             let temp_relation = {}
             temp_relation[String(new_gp_relation[0]['phenotype'])] = {}
             for (let i = 0, len = new_gp_relation.length; i < len; i++) {
               let item = new_gp_relation[i]
-              temp_relation[String(item['phenotype'])][String(item['gene'])] = { 'relation': item['gp_relation'], 'type': item['type'] }
+              temp_relation[String(item['phenotype'])][String(item['gene'])] = { 'name': item['name'], 'relation': item['gp_relation'], 'type': item['type'] }
             }
             for (var key1 in temp_relation) {
               this.all_multi_gp_relations[key1] = temp_relation[key1]
             }
+            this.all_results.push({ 'search_target_info': res.data.search_target_info })
             this.search_target.push(this.addPhenotype)
           }
           this.update_chart()

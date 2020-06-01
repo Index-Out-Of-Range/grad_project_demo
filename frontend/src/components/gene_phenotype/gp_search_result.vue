@@ -149,7 +149,7 @@ export default {
       knownTableSearchID: '',
       knownTableCurrentData: [],
       knownCurrentPage: 1,
-      knownPageSize: 10,
+      knownPageSize: 5,
       knownTotalItems: 0,
       knownFilterTableData: [],
       knownFlag: false,
@@ -157,7 +157,7 @@ export default {
       predictTableSearchID: '',
       predictTableCurrentData: [],
       predictCurrentPage: 1,
-      predictPageSize: 10,
+      predictPageSize: 5,
       predictTotalItems: 0,
       predictFilterTableData: [],
       predictFlag: false

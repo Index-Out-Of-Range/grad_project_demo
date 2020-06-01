@@ -16,7 +16,7 @@ module.exports = {
         menu4: 'Help',
         menu5: 'Manage Center'
       },
-      input_tip: 'Please input your search content',
+      input_tip: 'Input phenotype / gene',
       search_example: 'Search Example',
       button: 'Quick Search',
       down_menu: {
@@ -136,7 +136,10 @@ module.exports = {
       predict_file_fail_tip: 'Prediction failed, please try again',
       download_file_fail_tip: 'File download failed, please try again',
       get_process_fail_tip: 'Failed to get progress, please try again',
-      get_file_link_tip: 'Failed to get file link, please try again'
+      get_file_link_tip: 'Failed to get file link, please try again',
+
+      predicting_tip: 'Predicting, please wait',
+      predict_complete_tip: 'The prediction is complete!'
     }
   }
 }

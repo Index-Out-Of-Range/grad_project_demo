@@ -16,7 +16,7 @@ module.exports = {
         menu4: '帮助',
         menu5: '管理中心'
       },
-      input_tip: '请输入查询内容',
+      input_tip: '请输入疾病 / 基因',
       search_example: '查询示例',
       button: '快速查询',
       down_menu: {
@@ -136,7 +136,10 @@ module.exports = {
       predict_file_fail_tip: '预测失败，请重试',
       download_file_fail_tip: '下载文件失败，请重试',
       get_process_fail_tip: '获取进度失败，请重试',
-      get_file_link_tip: '获取文件链接失败，请重试'
+      get_file_link_tip: '获取文件链接失败，请重试',
+
+      predicting_tip: '正在预测,请稍候',
+      predict_complete_tip: '预测完成!'
     }
   }
 }

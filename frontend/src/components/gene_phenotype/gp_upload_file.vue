@@ -14,8 +14,8 @@
           <div v-if="start_predicting">
             <el-progress type="circle" :percentage="predicting_percentage" :color="customColorMethod" style="padding: 4% 0;"></el-progress>
             <div style="padding-bottom: 4%; font-size: 20px; font-weight:bold;">
-              <div v-if="predicting_percentage===100"> 预测完成!</div>
-              <div v-else>正在预测,请稍候</div>
+              <div v-if="predicting_percentage===100"> {{ $t('message.message_tip.predict_complete_tip')}}</div>
+              <div v-else>{{ $t('message.message_tip.predicting_tip')}}</div>
             </div>
             <div style="padding-bottom: 4%;">
               <el-button round type="primary" icon="el-icon-back" @click="goBack">返回</el-button>
